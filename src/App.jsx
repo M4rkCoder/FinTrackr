@@ -1,6 +1,5 @@
-import ShowTable from './Components/ShowTable';
-import './App.css'
-
+import ShowTable from "./Components/ShowTable";
+import "./App.css";
 
 function App() {
   return (
@@ -9,4 +8,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
