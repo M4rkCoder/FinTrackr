@@ -1,10 +1,19 @@
 import ShowTable from "./Components/ShowTable";
+import CreateForm from "./Components/CreateForm";
+import Box from "@mui/material/Box";
 import "./App.css";
 
 function App() {
   return (
-    <ShowTable />
-    // <TransactionList year={2024} month={2} filterType={'main_category'} filterValue={"수입"}/>
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      sx={{ width: "100%", p: 2 }}
+    >
+      <ShowTable />
+      <CreateForm />
+    </Box>
   );
 }
 

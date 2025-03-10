@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
-const useDataRead = (year, month, filterType = "*", filterValue = "*") => {
+const useDataCreate = (year, month, filterType = "*", filterValue = "*") => {
   const [data, setData] = useState([]); // 데이터 저장
   const [totalAmount, setTotalAmount] = useState(0);
   const [loading, setLoading] = useState(true); // 로딩 상태
