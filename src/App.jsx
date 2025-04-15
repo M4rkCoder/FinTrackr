@@ -12,7 +12,7 @@ function App() {
     filterValue: "*",
   });
   const [selectedDate, setSelectedDate] = useState(null);
-  const handleSearch = (year, month) => {
+  const handleDateSelect = (year, month) => {
     setSearch({
       ...search,
       year,
@@ -33,23 +33,23 @@ function App() {
       newMonth = 1;
       newYear += 1;
     }
-    handleSearch(newYear, newMonth);
+    setSearch({
+      ...search,
+      year,
+      month,
+    });
   };
 
   return (
     <>
       <header id="header">
-        <MonthlyHeader
-          {...search}
-          handleSearch={handleSearch}
-          handleMonthChange={handleMonthChange}
-        />
+        <MonthlyHeader {...search} handleMonthChange={handleMonthChange} />
       </header>
       <section id="main">
         {/* <Monthly {...search} handleSearch={handleSearch} /> */}
         <ShowCalendar
           {...search}
-          handleSearch={handleSearch}
+          handleDateSelect={handleDateSelect}
           handleMonthChange={handleMonthChange}
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}

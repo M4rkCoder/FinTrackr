@@ -9,7 +9,7 @@ import ShowDaily from "./ShowDaily";
 export default function ShowCalendar({
   year,
   month,
-  handleSearch,
+  handleDateSelect,
   selectedDate,
   setSelectedDate,
 }) {
@@ -49,7 +49,7 @@ export default function ShowCalendar({
     setValue(newDate);
     setSelectedDate(format(newDate, "yyyy-MM-dd"));
     if (newYear !== year || newMonth !== month) {
-      handleSearch(newYear, newMonth);
+      handleDateSelect(newYear, newMonth);
     }
   };
   if (loading) return <p>⏳ 로딩 중...</p>;
