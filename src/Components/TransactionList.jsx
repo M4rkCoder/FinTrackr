@@ -10,12 +10,12 @@ export default function TransactionList({
   filterValue = "*",
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const {
-    data: transactions,
-    totalAmount,
-    loading,
-    error,
-  } = useDataRead(year, month, filterType, filterValue);
+  const { data, loading, error } = useDataRead(
+    year,
+    month,
+    filterType,
+    filterValue
+  );
 
   if (loading) return <div>⏳ 로딩 중...</div>;
   if (error) return <div>❌ 오류 발생: {error}</div>;
@@ -24,7 +24,7 @@ export default function TransactionList({
     <section>
       <div className="table-header" onClick={() => setIsOpen(!isOpen)}>
         <h2>{filterValue}</h2>
-        <p>{totalAmount.toLocaleString()}원</p>
+        {/* <p>{totalAmount.toLocaleString()}원</p> */}
       </div>
       <div className={`table-container ${isOpen ? "open" : "closed"}`}>
         <table>
@@ -39,8 +39,8 @@ export default function TransactionList({
             </tr>
           </thead>
           <tbody>
-            {transactions.length > 0 ? (
-              <Transaction transactions={transactions} />
+            {data.length > 0 ? (
+              <Transaction transactions={data} />
             ) : (
               <tr>
                 <td colSpan="6">데이터가 없습니다.</td>

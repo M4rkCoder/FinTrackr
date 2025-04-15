@@ -3,7 +3,7 @@ export default function Transaction({ transactions }) {
     <>
       {transactions.map((item) => (
         <tr key={item.id}>
-          <td>{item.date}</td>
+          <td>{item.day}</td>
           <td>{item.sub_category}</td>
           <td>{item.amount.toLocaleString()}원</td>
           <td>{item.description}</td>

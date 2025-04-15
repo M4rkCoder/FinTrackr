@@ -1,5 +1,5 @@
 import TransactionList from "./Components/TransactionList.jsx";
-import Summary from "./Components/Summary.jsx";
+import MonthlySummary from "./Components/MonthlySummary.jsx";
 import "./monthly.css";
 
 function Monthly() {
@@ -14,7 +14,7 @@ function Monthly() {
       <h1 className="main-title">
         {search.year}년 {search.month}월 수입&지출 내역
       </h1>
-      <Summary {...search} />
+      <MonthlySummary {...search} />
       <TransactionList {...search} filterValue="수입" />
       <TransactionList {...search} filterValue="고정 소비지출" />
       <TransactionList {...search} filterValue="비고정 소비지출" />
