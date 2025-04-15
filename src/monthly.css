@@ -1,8 +1,7 @@
 .main-section {
-  height: "100vh";
-}
-
-.main-title {
-  font-size: 2rem;
-  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 200px;
+  max-width: 30%;
 }

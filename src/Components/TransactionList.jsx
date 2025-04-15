@@ -24,18 +24,15 @@ export default function TransactionList({
     <section>
       <div className="table-header" onClick={() => setIsOpen(!isOpen)}>
         <h2>{filterValue}</h2>
-        {/* <p>{totalAmount.toLocaleString()}원</p> */}
       </div>
       <div className={`table-container ${isOpen ? "open" : "closed"}`}>
         <table>
           <thead>
             <tr>
-              <th>날짜</th>
               <th>분류</th>
               <th>금액</th>
               <th>내역</th>
               <th>메모</th>
-              <th hidden>편집</th>
             </tr>
           </thead>
           <tbody>
