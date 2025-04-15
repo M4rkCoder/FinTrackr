@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Picker from "./Picker";
-import TransactionList from "./TransactionList";
+import DataTable from "./DataTable";
 
 export default function ShowTable() {
   const [year, setYear] = useState("");
@@ -27,7 +27,7 @@ export default function ShowTable() {
         onSearch={handleSearch}
       />
       {searchParams && (
-        <TransactionList
+        <DataTable
           year={searchParams.year}
           month={searchParams.month}
           filterType={"main_category"}

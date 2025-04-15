@@ -1,14 +1,5 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
+// import "./index.css";
 import App from "./App.jsx";
-import { ThemeProvider } from "@mui/material/styles";
-import theme from "./theme"; // 위에서 만든 테마 불러오기
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <ThemeProvider theme={theme}>
-      <App />
-    </ThemeProvider>
-  </StrictMode>
-);
+createRoot(document.getElementById("root")).render(<App />);

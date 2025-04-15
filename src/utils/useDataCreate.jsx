@@ -48,4 +48,4 @@ const useDataCreate = (year, month, filterType = "*", filterValue = "*") => {
   return { data, totalAmount, loading, error };
 };
 
-export default useDataRead;
+export default useDataCreate;

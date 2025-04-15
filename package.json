@@ -1,5 +1,5 @@
 {
-  "name": "my-react-app",
+  "name": "fintrackr",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -14,6 +14,7 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.7",
     "@mui/material": "^6.4.7",
+    "@mui/x-data-grid": "^7.27.3",
     "@supabase/supabase-js": "^2.49.1",
     "@tailwindcss/vite": "^4.0.9",
     "react": "^19.0.0",

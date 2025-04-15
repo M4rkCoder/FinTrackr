@@ -1,19 +1,17 @@
-import ShowTable from "./Components/ShowTable";
-import CreateForm from "./Components/CreateForm";
-import Box from "@mui/material/Box";
+import Monthly from "./Monthly.jsx";
 import "./App.css";
 
 function App() {
+  const search = {
+    year: 2024,
+    month: 1,
+    filterType: "main_category",
+    filterValue: "*",
+  };
   return (
-    <Box
-      display="flex"
-      justifyContent="space-between"
-      alignItems="center"
-      sx={{ width: "100%", p: 2 }}
-    >
-      <ShowTable />
-      <CreateForm />
-    </Box>
+    <section id="main">
+      <Monthly {...search} />
+    </section>
   );
 }
 
