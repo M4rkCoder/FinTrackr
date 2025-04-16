@@ -1,11 +1,7 @@
 import MonthlySummary from "./MonthlySummary.jsx";
 import "./MonthlyHeader.css";
 
-export default function MonthlyHeader({
-  handleSearch,
-  handleMonthChange,
-  ...search
-}) {
+export default function MonthlyHeader({ handleMonthChange, ...search }) {
   return (
     <div>
       <h1 className="main-title">

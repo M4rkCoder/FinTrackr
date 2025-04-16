@@ -35,8 +35,8 @@ function App() {
     }
     setSearch({
       ...search,
-      year,
-      month,
+      year: newYear,
+      month: newMonth,
     });
   };
 
