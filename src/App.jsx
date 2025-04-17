@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Monthly from "./Monthly.jsx";
 import ShowCalendar from "./Components/ShowCalendar.jsx";
 import MonthlyHeader from "./Components/MonthlyHeader.jsx";
 import "./App.css";
