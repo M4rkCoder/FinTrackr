@@ -60,31 +60,34 @@
 
 ## 5. 🧮 화면별 UI 구성
 
-| 화면            | 주요 요소                      | 설명                   |
-| --------------- | ------------------------------ | ---------------------- |
-| 로그인/회원가입 | 이메일 인증, 자동 로그인       | Supabase Auth          |
-| 대시보드        | 월간 수입/지출 요약, 그래프    |                        |
-| 거래 입력       | 날짜 선택, 카테고리, 금액 입력 |                        |
-| 달력 화면       | 각 날짜에 수입/지출 요약 표시  | 날짜 클릭 시 상세 보기 |
-| 통계 화면       | 월간 차트, 카테고리 비율 분석  | Chart.js 사용          |
+| 화면            | 주요 요소                          | 설명                   |
+| --------------- | ---------------------------------- | ---------------------- |
+| 로그인/회원가입 | 이메일 인증, 자동 로그인           | Supabase Auth          |
+| 대시보드        | 월간/연간 요약, 그래프             | Chart.js 사용          |
+| 달력 화면       | 각 날짜에 수입/지출 요약 표시      | 날짜 클릭 시 상세 보기 |
+| 거래 입력/조회  | 날짜 선택, 카테고리, 금액 입력     |                        |
+| 자산 화면       | 자산 관리, 변동내역 조회/입력      |                        |
+| 통계 화면       | 월간 차트, 카테고리 비율 분석      | Chart.js 사용          |
+| 설정 화면       | 카테고리 관리, 고정지출 관리(반복) |                        |
 
 ---
 
 ## 6. 📦 컴포넌트 구조
 
+<pre>
 App
-├── Navbar
-├── Dashboard
-│ ├── CalendarWithSummary
-│ └── MonthlySummaryChart
-├── Transaction
-│ ├── TransactionForm
-│ └── TransactionList
-├── Statistics
-│ ├── IncomeExpenseChart
-│ └── CategoryPieChart
-└── Auth
-└── Login / Signup
+ ├── Navbar
+ ├── Dashboard 
+ │ ├── CalendarWithSummary 
+ │ └── MonthlySummaryChart 
+ ├── Transaction 
+ │ ├── TransactionForm 
+ │ └── TransactionList 
+ ├── Statistics 
+ │ ├── IncomeExpenseChart 
+ │ └── CategoryPieChart 
+ └── Auth 
+    └── Login / Signup </pre>
 
 ## 7. 📆 개발 일정 (예시)
 

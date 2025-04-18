@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { supabase } from "../utils/supabase";
+import { supabase } from "../../utils/supabase";
 import { format } from "date-fns";
 import "./ShowCalendar.css";
 import ShowDaily from "./ShowDaily";
@@ -20,6 +20,7 @@ export default function ShowCalendar({
 
   useEffect(() => {
     setValue(new Date(year, month - 1, 1));
+    setSelectedDate(null);
   }, [year, month]);
 
   useEffect(() => {
@@ -101,7 +102,7 @@ export default function ShowCalendar({
           return null;
         }}
       />
-      {selectedDate && <ShowDaily key={selectedDate} date={selectedDate} />}
+      {selectedDate && <ShowDaily date={selectedDate} />}
     </div>
   );
 }

@@ -1,9 +1,10 @@
 import MonthlySummary from "./MonthlySummary.jsx";
 import "./MonthlyHeader.css";
+import "./MonthlySummary.css";
 
 export default function MonthlyHeader({ handleMonthChange, ...search }) {
   return (
-    <div>
+    <>
       <h1 className="main-title">
         <button onClick={() => handleMonthChange(-1)}>&lt;</button>
         <span>
@@ -12,6 +13,6 @@ export default function MonthlyHeader({ handleMonthChange, ...search }) {
         <button onClick={() => handleMonthChange(1)}>&gt;</button>
       </h1>
       <MonthlySummary {...search} />
-    </div>
+    </>
   );
 }

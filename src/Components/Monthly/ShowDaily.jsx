@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import Transaction from "./Transaction";
-import { supabase } from "../utils/supabase";
+import Transaction from "../Transaction";
+import { supabase } from "../../utils/supabase";
 import "./ShowCalendar.css";
 
 export default function ShowDaily({ date }) {
@@ -33,10 +33,10 @@ export default function ShowDaily({ date }) {
   if (error) return <p>❌ 오류 발생: {error}</p>;
 
   const dailyIncome = data.filter(
-    (item) => item.day === date && item.main_category === "수입"
+    (item) => item.day === date && item.type === "수입"
   );
   const dailyExpense = data.filter(
-    (item) => item.day === date && item.main_category !== "수입"
+    (item) => item.day === date && item.type === "지출"
   );
 
   const renderTable = (title, transactions) => {
