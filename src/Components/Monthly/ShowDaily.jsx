@@ -1,12 +1,26 @@
 import { useState, useEffect } from "react";
 import Transaction from "../Transaction";
 import { supabase } from "../../utils/supabase";
-import "./ShowCalendar.css";
+import "./ShowDaily.css";
 
-export default function ShowDaily({ date }) {
+export default function ShowDaily({ date, onClose }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
 
   useEffect(() => {
     async function fetchDaily() {
@@ -29,9 +43,6 @@ export default function ShowDaily({ date }) {
     fetchDaily();
   }, [date]);
 
-  if (loading) return <div className="dailyView">⏳ 로딩 중...</div>;
-  if (error) return <p>❌ 오류 발생: {error}</p>;
-
   const dailyIncome = data.filter(
     (item) => item.day === date && item.type === "수입"
   );
@@ -42,7 +53,7 @@ export default function ShowDaily({ date }) {
   const renderTable = (title, transactions) => {
     if (transactions.length > 0) {
       return (
-        <div>
+        <div style={{ marginBottom: "1rem" }}>
           <h3>{title}</h3>
           <table>
             <thead>
@@ -65,10 +76,21 @@ export default function ShowDaily({ date }) {
   };
 
   return (
-    <section className="dailyView">
-      <h2 style={{ marginBottom: "1rem" }}>{date}</h2>
-      {renderTable("수입", dailyIncome)}
-      {renderTable("지출", dailyExpense)}
-    </section>
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <button className="modal-close" onClick={onClose}>
+          닫기
+        </button>
+        <h2>{date} 거래 내역</h2>
+        {loading && <p>⏳ 로딩 중...</p>}
+        {error && <p>❌ 오류 발생: {error}</p>}
+        {!loading && !error && (
+          <>
+            {renderTable("수입", dailyIncome)}
+            {renderTable("지출", dailyExpense)}
+          </>
+        )}
+      </div>
+    </div>
   );
 }

@@ -5,6 +5,7 @@ import { supabase } from "../../utils/supabase";
 import { format } from "date-fns";
 import "./ShowCalendar.css";
 import ShowDaily from "./ShowDaily";
+import ChartBar from "./ChartBar";
 
 export default function ShowCalendar({
   year,
@@ -53,56 +54,63 @@ export default function ShowCalendar({
       handleDateSelect(newYear, newMonth);
     }
   };
+
   if (loading) return <p>⏳ 로딩 중...</p>;
   if (error) return <p>❌ 오류 발생: {error}</p>;
 
   return (
-    <div className="calendarView">
-      <Calendar
-        navigationLabel={() => null}
-        prevLabel={null}
-        nextLabel={null}
-        prev2Label={null}
-        next2Label={null}
-        onChange={handleCalendarChange}
-        onClickDay={handleCalendarChange}
-        value={value}
-        formatDay={(locale, date) => format(date, "d")}
-        calendarType="gregory"
-        tileContent={({ date, view }) => {
-          if (view === "month") {
-            const formattedDate = format(date, "yyyy-MM-dd");
-            const dailyData = data.find((item) => item.day === formattedDate);
+    <>
+      <div className="calendarView">
+        <Calendar
+          navigationLabel={() => null}
+          prevLabel={null}
+          nextLabel={null}
+          prev2Label={null}
+          next2Label={null}
+          onChange={handleCalendarChange}
+          onClickDay={handleCalendarChange}
+          value={value}
+          formatDay={(locale, date) => format(date, "d")}
+          calendarType="gregory"
+          tileContent={({ date, view }) => {
+            if (view === "month") {
+              const formattedDate = format(date, "yyyy-MM-dd");
+              const dailyData = data.find((item) => item.day === formattedDate);
 
-            if (!dailyData) return null;
+              if (!dailyData) return null;
 
-            return (
-              <div style={{ fontSize: "12px", marginTop: "4px" }}>
-                {dailyData.daily_income > 0 && (
-                  <div style={{ color: "green" }}>
-                    {dailyData.daily_income.toLocaleString()}
-                  </div>
-                )}
-                {dailyData.daily_expense > 0 && (
-                  <div style={{ color: "red" }}>
-                    {dailyData.daily_expense.toLocaleString()}
-                  </div>
-                )}
-              </div>
-            );
-          }
-          return null;
-        }}
-        tileClassName={({ date, view }) => {
-          if (view === "month") {
-            const day = date.getDay();
-            if (day === 6) return "saturday";
-            return "calendar-cell";
-          }
-          return null;
-        }}
-      />
-      {selectedDate && <ShowDaily date={selectedDate} />}
-    </div>
+              return (
+                <div style={{ fontSize: "12px", marginTop: "4px" }}>
+                  {dailyData.daily_income > 0 && (
+                    <div style={{ color: "green" }}>
+                      {dailyData.daily_income.toLocaleString()}
+                    </div>
+                  )}
+                  {dailyData.daily_expense > 0 && (
+                    <div style={{ color: "red" }}>
+                      {dailyData.daily_expense.toLocaleString()}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            return null;
+          }}
+          tileClassName={({ date, view }) => {
+            if (view === "month") {
+              const day = date.getDay();
+              if (day === 6) return "saturday";
+              return "calendar-cell";
+            }
+            return null;
+          }}
+        />
+      </div>
+      <ChartBar data={data} onBarClick={(date) => setSelectedDate(date)} />
+
+      {selectedDate && (
+        <ShowDaily date={selectedDate} onClose={() => setSelectedDate(null)} />
+      )}
+    </>
   );
 }
