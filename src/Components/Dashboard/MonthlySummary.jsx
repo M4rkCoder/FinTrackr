@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../../utils/supabase";
+import { supabase } from "../../utils/supabase.js";
 import "../../utils/CategoryPieChart.jsx";
 import CategoryChart from "../../utils/CategoryChart.jsx";
 import "./MonthlySummary.css";

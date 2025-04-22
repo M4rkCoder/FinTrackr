@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import "./ShowCalendar.css";
 import ShowDaily from "./ShowDaily";
 import ChartBar from "./ChartBar";
+import SumView from "./SumView";
 
 export default function ShowCalendar({
   year,
@@ -60,7 +61,8 @@ export default function ShowCalendar({
 
   return (
     <>
-      <div className="calendarView">
+      <SumView year={year} month={month} />
+      <div className="mt-4 flex justify-center items-center w-[1000px]">
         <Calendar
           navigationLabel={() => null}
           prevLabel={null}

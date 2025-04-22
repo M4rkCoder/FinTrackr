@@ -1,8 +1,8 @@
-import MonthlyCalendar from "./pages/MonthlyCalendar.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 import "./App.css";
 
 function App() {
-  return <MonthlyCalendar />;
+  return <Dashboard />;
 }
 
 export default App;

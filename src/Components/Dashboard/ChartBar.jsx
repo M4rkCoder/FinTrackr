@@ -34,7 +34,7 @@ export default function ChartBar({ data, onBarClick }) {
         <button
           onClick={handleToggle}
           style={{
-            backgroundColor: toggle === "expense" ? "#A8D5BA" : "#ccc",
+            backgroundColor: toggle === "expense" ? "#A8D5BA" : "#F4A7B9",
             cursor: "pointer",
             padding: "6px 16px",
             border: "none",

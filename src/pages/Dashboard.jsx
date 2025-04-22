@@ -1,9 +1,9 @@
 import { useState } from "react";
-import ShowCalendar from "../Components/Monthly/ShowCalendar.jsx";
-import MonthlyHeader from "../Components/Monthly/MonthlyHeader.jsx";
+import ShowCalendar from "../Components/Dashboard/ShowCalendar.jsx";
+import MonthlyHeader from "../Components/Dashboard/MonthlyHeader.jsx";
 import "./MonthlyCalendar.css";
 
-function MonthlyCalendar() {
+function Dashboard() {
   const [search, setSearch] = useState({
     year: 2024,
     month: 1,
@@ -41,10 +41,10 @@ function MonthlyCalendar() {
 
   return (
     <>
-      <header id="header">
+      <header className="flex flex-col justify-between w-[90%] h-[10%] p-4">
         <MonthlyHeader {...search} handleMonthChange={handleMonthChange} />
       </header>
-      <section id="main">
+      <section className="flex flex-col justify-center items-center w-full p-4">
         <ShowCalendar
           {...search}
           handleDateSelect={handleDateSelect}
@@ -57,4 +57,4 @@ function MonthlyCalendar() {
   );
 }
 
-export default MonthlyCalendar;
+export default Dashboard;
