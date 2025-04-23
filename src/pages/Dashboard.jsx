@@ -41,7 +41,7 @@ function Dashboard() {
 
   return (
     <>
-      <header className="flex flex-col justify-between w-[90%] h-[10%] p-4">
+      <header className="flex flex-col justify-between w-full h-[10%] px-4">
         <MonthlyHeader {...search} handleMonthChange={handleMonthChange} />
       </header>
       <section className="flex flex-col justify-center items-center w-full p-4">
