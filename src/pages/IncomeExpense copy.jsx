@@ -1,10 +1,9 @@
-import TransactionList from "./Components/TransactionList.jsx";
-import MonthlySummary from "./Components/MonthlySummary.jsx";
+import TransactionList from "../Components/TransactionList.jsx";
 import "./monthly.css";
 
-function Monthly({ ...search }) {
+function IncomeExpense({ search }) {
   return (
-    <section className="main-section">
+    <section>
       <TransactionList {...search} filterValue="수입" />
       <TransactionList {...search} filterValue="고정 소비지출" />
       <TransactionList {...search} filterValue="비고정 소비지출" />
@@ -13,4 +12,4 @@ function Monthly({ ...search }) {
   );
 }
 
-export default Monthly;
+export default IncomeExpense;
