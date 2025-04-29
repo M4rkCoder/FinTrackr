@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import ShowCalendar from "../Components/Dashboard/ShowCalendar.jsx";
-import MonthlyHeader from "../Components/MonthlyHeader.jsx";
-import MonthlySummary from "../Components/Dashboard/MonthlySummary.jsx";
-import TransactionModal from "@/Components/TransactionModal.jsx";
+import ShowCalendar from "../components/Dashboard/ShowCalendar.jsx";
+import MonthlyHeader from "../components/MonthlyHeader.jsx";
+import MonthlySummary from "../components/Dashboard/MonthlySummary.jsx";
+import TransactionModal from "@/components/TransactionModal.jsx";
 import { Pencil } from "lucide-react";
 import "./MonthlyCalendar.css";
 

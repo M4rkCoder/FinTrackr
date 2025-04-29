@@ -3,7 +3,7 @@ import {
   DialogHeader,
   DialogContent,
   DialogTitle,
-} from "@/Components/ui/dialog";
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -11,22 +11,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/Components/ui/form";
+} from "@/components/ui/form";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from "@/Components/ui/popover";
+} from "@/components/ui/popover";
 import {
   Command,
   CommandInput,
   CommandList,
   CommandEmpty,
   CommandItem,
-} from "@/Components/ui/command";
-import { Input } from "@/Components/ui/input";
-import { Textarea } from "@/Components/ui/textarea";
-import { Button } from "@/Components/ui/button";
+} from "@/components/ui/command";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";

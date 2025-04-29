@@ -1,4 +1,4 @@
-import TransactionList from "../Components/TransactionList.jsx";
+import TransactionList from "../components/TransactionList.jsx";
 import "./monthly.css";
 
 function IncomeExpense({ search }) {

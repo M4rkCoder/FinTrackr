@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import TransactionTable from "../Components/IncomeExpense/TransactionTable.jsx";
-import MonthlyHeader from "../Components/MonthlyHeader.jsx";
+import TransactionTable from "../components/IncomeExpense/TransactionTable.jsx";
+import MonthlyHeader from "../components/MonthlyHeader.jsx";
 import { supabase } from "../utils/supabase.js";
 
 function IncomeExpense({ search, handleMonthChange }) {
