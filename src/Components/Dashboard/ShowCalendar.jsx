@@ -7,6 +7,14 @@ import "./ShowCalendar.css";
 import ShowDaily from "./ShowDaily";
 import ChartBar from "./ChartBar";
 import SumView from "./SumView";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 export default function ShowCalendar({
   year,
@@ -110,9 +118,23 @@ export default function ShowCalendar({
       </div>
       <ChartBar data={data} onBarClick={(date) => setSelectedDate(date)} />
 
-      {selectedDate && (
-        <ShowDaily date={selectedDate} onClose={() => setSelectedDate(null)} />
-      )}
+      <Dialog
+        open={!!selectedDate}
+        onOpenChange={(open) => {
+          if (!open) setSelectedDate(null);
+        }}
+      >
+        <DialogContent className="max-w-2xl bg-white p-6 rounded-xl shadow-xl">
+          <DialogHeader>
+            <DialogTitle>{selectedDate} 거래 내역</DialogTitle>
+          </DialogHeader>
+
+          <ShowDaily
+            date={selectedDate}
+            onClose={() => setSelectedDate(null)}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

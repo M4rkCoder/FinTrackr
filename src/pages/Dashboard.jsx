@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import ShowCalendar from "../Components/Dashboard/ShowCalendar.jsx";
 import MonthlyHeader from "../Components/MonthlyHeader.jsx";
 import MonthlySummary from "../Components/Dashboard/MonthlySummary.jsx";
+import TransactionModal from "@/Components/TransactionModal.jsx";
+import { Pencil } from "lucide-react";
 import "./MonthlyCalendar.css";
 
 function Dashboard({
@@ -11,6 +13,8 @@ function Dashboard({
   handleMonthChange,
   setSelectedDate,
 }) {
+  const [open, setOpen] = useState(false);
+
   return (
     <>
       <header className="flex flex-col justify-between w-full h-[10%] px-4">
@@ -25,6 +29,13 @@ function Dashboard({
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
         />
+        <TransactionModal open={open} onOpenChange={setOpen} />
+        <button
+          onClick={() => setOpen(true)}
+          className="fixed bottom-6 right-6 bg-brand hover:bg-dark text-light rounded-full p-4 shadow-lg text-xl"
+        >
+          <Pencil size={24} />
+        </button>
       </section>
     </>
   );

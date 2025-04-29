@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard.jsx";
 import IncomeExpense from "./pages/IncomeExpense.jsx";
-import TransactionForm from "./Components/TransactionForm.jsx";
+import TransactionModal from "./Components/TransactionModal.jsx";
 import NavBar from "./Components/NavBar/NavBar.jsx";
 import "./App.css";
 
@@ -83,7 +83,6 @@ function App() {
             />
           }
         />
-        <Route path="/TransactionForm" element={<TransactionForm />} />
       </Routes>
     </Router>
   );

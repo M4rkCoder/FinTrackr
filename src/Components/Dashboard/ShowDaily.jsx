@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Transaction from "../Transaction";
 import { supabase } from "../../utils/supabase";
-import "./ShowDaily.css";
 
 export default function ShowDaily({ date, onClose }) {
   const [data, setData] = useState([]);
@@ -78,10 +77,6 @@ export default function ShowDaily({ date, onClose }) {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <button className="modal-close" onClick={onClose}>
-          닫기
-        </button>
-        <h2>{date} 거래 내역</h2>
         {loading && <p>⏳ 로딩 중...</p>}
         {error && <p>❌ 오류 발생: {error}</p>}
         {!loading && !error && (
