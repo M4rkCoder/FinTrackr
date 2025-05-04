@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard.jsx";
 import IncomeExpense from "./pages/IncomeExpense.jsx";
-import TransactionModal from "./components/TransactionModal.jsx";
 import NavBar from "./components/NavBar/NavBar.jsx";
 import "./App.css";
 
