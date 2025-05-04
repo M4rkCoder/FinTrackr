@@ -3,6 +3,7 @@ import {
   DialogHeader,
   DialogContent,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -36,14 +37,18 @@ import { supabase } from "../utils/supabase";
 
 const formSchema = z.object({
   date: z.coerce.date({ message: "날짜를 선택해주세요" }),
-  category: z.string().min(1, "카테고리를 선택해주세요"),
+  category: z.object({
+    sub_category: z.string().min(1, "카테고리를 선택해주세요"),
+    id: z.string().min(1, "카테고리 ID 오류"),
+  }),
   amount: z.string().min(1, "금액을 입력해주세요"),
   description: z.string().optional(),
   remarks: z.string().optional(),
 });
 
-export default function TransactionModal({ open, onOpenChange }) {
+export default function TransactionModal({ open, onOpenChange, onAdd }) {
   const [categories, setCategories] = useState([]);
+  const [formattedAmount, setFormattedAmount] = useState("");
 
   useEffect(() => {
     supabase
@@ -60,17 +65,38 @@ export default function TransactionModal({ open, onOpenChange }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       date: new Date().toISOString().split("T")[0],
-      category: "",
+      category: { sub_category: "", id: "" },
       amount: "",
       description: "",
       remarks: "",
     },
   });
 
-  const onSubmit = (data) => {
-    console.log("제출된 데이터:", data);
-    form.reset();
-    onOpenChange(false);
+  const onSubmit = async (data) => {
+    const { date, category, amount, description, remarks } = data;
+    const { error } = await supabase.from("transactions").insert([
+      {
+        date: date,
+        category_id: category.id,
+        amount: Number(amount.replace(/,/g, "")),
+        description: description || null,
+        remarks: remarks || null,
+      },
+    ]);
+
+    if (error) {
+      console.error("업로드 실패:", error);
+      alert("가계부 입력 오류");
+      return;
+    } else {
+      if (onAdd) {
+        onAdd();
+      }
+      alert("가계부 입력 완료");
+      form.reset();
+      setFormattedAmount("");
+      onOpenChange(false);
+    }
   };
 
   return (
@@ -78,6 +104,9 @@ export default function TransactionModal({ open, onOpenChange }) {
       <DialogContent className="max-w-xl">
         <DialogHeader>
           <DialogTitle>💸 가계부 기록하기</DialogTitle>
+          <DialogDescription className="sr-only">
+            가계부를 입력하는 창입니다.
+          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -116,9 +145,11 @@ export default function TransactionModal({ open, onOpenChange }) {
                             field.value
                               ? `${
                                   categories.find(
-                                    (cat) => cat.sub_category === field.value
+                                    (cat) =>
+                                      cat.sub_category ===
+                                      field.value.sub_category
                                   )?.emoji || " "
-                                } ${field.value}`
+                                } ${field.value.sub_category}`
                               : ""
                           }
                           className="cursor-pointer w-full"
@@ -140,8 +171,10 @@ export default function TransactionModal({ open, onOpenChange }) {
                             <CommandItem
                               key={cat.id}
                               onSelect={() => {
-                                // 선택한 값을 `field.onChange`에 넘겨줍니다 (예: sub_category만 저장)
-                                field.onChange(cat.sub_category);
+                                field.onChange({
+                                  sub_category: cat.sub_category,
+                                  id: cat.id,
+                                });
                               }}
                               className="flex items-center gap-2"
                             >
@@ -175,7 +208,17 @@ export default function TransactionModal({ open, onOpenChange }) {
                 <FormItem>
                   <FormLabel>금액</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="예: 12000" {...field} />
+                    <Input
+                      type="text"
+                      placeholder="예: 12000"
+                      value={formattedAmount}
+                      onChange={(e) => {
+                        const rawValue = e.target.value.replace(/[^0-9]/g, "");
+                        const formatted = Number(rawValue).toLocaleString();
+                        setFormattedAmount(formatted);
+                        field.onChange(rawValue);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

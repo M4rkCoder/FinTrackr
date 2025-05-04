@@ -9,11 +9,10 @@ import ChartBar from "./ChartBar";
 import SumView from "./SumView";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogClose,
+  DialogDescription,
 } from "@/components/ui/dialog";
 
 export default function ShowCalendar({
@@ -127,6 +126,9 @@ export default function ShowCalendar({
         <DialogContent className="max-w-2xl bg-white p-6 rounded-xl shadow-xl">
           <DialogHeader>
             <DialogTitle>{selectedDate} 거래 내역</DialogTitle>
+            <DialogDescription className="sr-only">
+              {selectedDate} 내역을 보여줍니다.
+            </DialogDescription>
           </DialogHeader>
 
           <ShowDaily
