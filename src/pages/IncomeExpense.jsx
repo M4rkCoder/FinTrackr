@@ -2,47 +2,59 @@ import React, { useEffect, useState } from "react";
 import TransactionTable from "../components/IncomeExpense/TransactionTable.jsx";
 import MonthlyHeader from "../components/MonthlyHeader.jsx";
 import TransactionModal from "@/components/TransactionModal.jsx";
-import { supabase } from "../utils/supabase.js";
+import useSupabase from "@/utils/useSupabase.js";
 import { Pencil } from "lucide-react";
 
 function IncomeExpense({ search, handleMonthChange }) {
   const { year, month } = search;
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
+  const [editRow, setEditRow] = useState(null);
+  const { data, loading, error, fetchData } = useSupabase(
+    "monthly_transaction"
+  );
+  const { remove, update } = useSupabase("transactions");
 
-  async function fetchData() {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("monthly_transaction")
-        .select("*")
-        .eq("month", `${year}-${month.toString().padStart(2, "0")}-01`);
+  const handleRemove = async (ids) => {
+    const { data, error } = await remove(ids);
 
-      if (error) throw error;
-      setData(data);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
+    if (!error) {
+      alert("기록 삭제 완료");
+      await fetchData({
+        month: `${year}-${month.toString().padStart(2, "0")}-01`,
+      });
     }
-  }
+    return { data, error };
+  };
+
+  const handleEdit = (row) => {
+    setEditRow(row);
+    setOpen(true);
+  };
+
   useEffect(() => {
-    fetchData();
+    fetchData({ month: `${year}-${month.toString().padStart(2, "0")}-01` });
   }, [year, month]);
   if (loading) return <p>⏳ 로딩 중...</p>;
   if (error) return <p>❌ 오류 발생: {error}</p>;
   return (
     <section>
       <MonthlyHeader {...search} handleMonthChange={handleMonthChange} />
-      <TransactionTable data={data} onDataChange={setData} />
+      <TransactionTable
+        data={data}
+        onRemove={handleRemove}
+        onEdit={handleEdit}
+      />
       <TransactionModal
         open={open}
         onOpenChange={setOpen}
-        onAdd={() => {
-          fetchData();
+        onAddOrUpdate={async () => {
+          await fetchData({
+            month: `${year}-${month.toString().padStart(2, "0")}-01`,
+          });
+          setEditRow(null);
         }}
+        editRow={editRow}
+        update={update}
       />
       <button
         onClick={() => setOpen(true)}

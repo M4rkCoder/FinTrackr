@@ -46,7 +46,13 @@ const formSchema = z.object({
   remarks: z.string().optional(),
 });
 
-export default function TransactionModal({ open, onOpenChange, onAdd }) {
+export default function TransactionModal({
+  open,
+  onOpenChange,
+  editRow,
+  onAddOrUpdate,
+  update,
+}) {
   const [categories, setCategories] = useState([]);
   const [formattedAmount, setFormattedAmount] = useState("");
 
@@ -72,40 +78,59 @@ export default function TransactionModal({ open, onOpenChange, onAdd }) {
     },
   });
 
+  useEffect(() => {
+    if (editRow) {
+      form.reset({
+        date: new Date(editRow.day).toISOString().split("T")[0],
+        category: {
+          sub_category: editRow.sub_category,
+          id: editRow.id,
+        },
+        amount: String(editRow.amount),
+        description: editRow.description || "",
+        remarks: editRow.remarks || "",
+      });
+      setFormattedAmount(Number(editRow.amount).toLocaleString());
+    }
+  }, [editRow, form]);
+
   const onSubmit = async (data) => {
     const { date, category, amount, description, remarks } = data;
-    const { error } = await supabase.from("transactions").insert([
-      {
-        date: date,
-        category_id: category.id,
-        amount: Number(amount.replace(/,/g, "")),
-        description: description || null,
-        remarks: remarks || null,
-      },
-    ]);
-
+    const payload = {
+      date: date,
+      category_id: category.id,
+      amount: Number(amount.replace(/,/g, "")),
+      description: description || null,
+      remarks: remarks || null,
+    };
+    if (editRow) {
+      const res = await update(editRow.id, payload);
+      error = res.error;
+    } else {
+      const res = await supabase.from("transactions").insert([payload]);
+      error = res.error;
+    }
     if (error) {
-      console.error("업로드 실패:", error);
+      console.error("저장 실패:", error);
       alert("가계부 입력 오류");
       return;
-    } else {
-      if (onAdd) {
-        onAdd();
-      }
-      alert("가계부 입력 완료");
-      form.reset();
-      setFormattedAmount("");
-      onOpenChange(false);
     }
+    alert("가계부 입력 완료");
+    onAddOrUpdate?.();
+    form.reset();
+    setFormattedAmount("");
+    onOpenChange(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle>💸 가계부 기록하기</DialogTitle>
+          <DialogTitle>
+            {editRow ? "가계부 수정하기" : "가계부 기록하기"}
+          </DialogTitle>
           <DialogDescription className="sr-only">
-            가계부를 입력하는 창입니다.
+            가계부를 입력하거나 수정합니다.
           </DialogDescription>
         </DialogHeader>
 
@@ -254,7 +279,7 @@ export default function TransactionModal({ open, onOpenChange, onAdd }) {
             />
 
             <Button type="submit" className="w-full">
-              저장하기
+              {editRow ? "수정하기" : "저장하기"}
             </Button>
           </form>
         </Form>

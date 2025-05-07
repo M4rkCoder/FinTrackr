@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { supabase } from "../../utils/supabase";
+import useSupabase from "@/utils/useSupabase.js";
 import { format } from "date-fns";
 import "./ShowCalendar.css";
 import ShowDaily from "./ShowDaily";
@@ -23,9 +23,7 @@ export default function ShowCalendar({
   setSelectedDate,
 }) {
   const [value, setValue] = useState(new Date(year, month - 1, 1));
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data, loading, error, fetchData } = useSupabase("daily_summary");
 
   useEffect(() => {
     setValue(new Date(year, month - 1, 1));
@@ -33,24 +31,8 @@ export default function ShowCalendar({
   }, [year, month]);
 
   useEffect(() => {
-    async function fetchDaily() {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from("daily_summary")
-          .select("*")
-          .eq("month", `${year}-${month.toString().padStart(2, "0")}-01`);
-
-        if (error) throw error;
-        setData(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchDaily();
+    const formattedMonth = `${year}-${month.toString().padStart(2, "0")}-01`;
+    fetchData({ month: formattedMonth });
   }, [year, month]);
 
   const handleCalendarChange = (newDate) => {
@@ -130,11 +112,12 @@ export default function ShowCalendar({
               {selectedDate} 내역을 보여줍니다.
             </DialogDescription>
           </DialogHeader>
-
-          <ShowDaily
-            date={selectedDate}
-            onClose={() => setSelectedDate(null)}
-          />
+          {selectedDate && (
+            <ShowDaily
+              date={selectedDate}
+              onClose={() => setSelectedDate(null)}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </>

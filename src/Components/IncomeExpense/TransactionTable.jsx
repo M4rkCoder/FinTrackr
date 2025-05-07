@@ -18,27 +18,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2 } from "lucide-react";
-import { supabase } from "@/utils/supabase";
 
-export default function TransactionTable({ data, onDataChange }) {
+export default function TransactionTable({ data, onRemove, onEdit }) {
   const [filter, setFilter] = useState("");
   const [selectedRowIds, setSelectedRowIds] = useState(new Set());
   const headerCheckboxRef = useRef(null);
-
-  const deleteSelectedRows = async (ids) => {
-    if (!ids.length) return;
-
-    const { error } = await supabase
-      .from("transactions")
-      .delete()
-      .in("id", ids);
-
-    if (error) {
-      console.error("삭제 실패:", error.message);
-    } else {
-      console.log("삭제 성공:", ids);
-    }
-  };
 
   const filteredData = useMemo(() => {
     if (!filter.trim()) return data;
@@ -63,12 +47,13 @@ export default function TransactionTable({ data, onDataChange }) {
 
   const handleDeleteSelected = async () => {
     const idsToDelete = Array.from(selectedRowIds);
+    if (!idsToDelete.length) return;
 
-    await deleteSelectedRows(idsToDelete);
+    const { error } = await onRemove(idsToDelete);
 
-    const newData = data.filter((row) => !idsToDelete.includes(row.id));
-    setSelectedRowIds(new Set());
-    onDataChange(newData);
+    if (!error) {
+      setSelectedRowIds(new Set());
+    }
   };
 
   const isAllSelected =
@@ -237,7 +222,14 @@ export default function TransactionTable({ data, onDataChange }) {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
+              <TableRow
+                key={row.id}
+                onClick={() => {
+                  console.log("클릭됨", row.original);
+                  onEdit(row.original);
+                }}
+                className="cursor-pointer hover:bg-zinc-100"
+              >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import Transaction from "../Transaction";
-import { supabase } from "../../utils/supabase";
+import useSupabase from "@/utils/useSupabase.js";
 
 export default function ShowDaily({ date, onClose }) {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data, loading, error, fetchData } = useSupabase(
+    "monthly_transaction"
+  );
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -22,24 +22,9 @@ export default function ShowDaily({ date, onClose }) {
   }, [onClose]);
 
   useEffect(() => {
-    async function fetchDaily() {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from("monthly_transaction")
-          .select("*")
-          .eq("day", date);
-
-        if (error) throw error;
-        setData(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+    if (date) {
+      fetchData({ day: date });
     }
-
-    fetchDaily();
   }, [date]);
 
   const dailyIncome = data.filter(

@@ -2,16 +2,30 @@ import { useState } from "react";
 import { supabase } from "./supabase.js";
 
 export default function useSupabase(tableName) {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  async function fetchAll() {
+  async function fetchData(filters = {}) {
     setLoading(true);
-    const { data, error } = await supabase.from(tableName).select("*");
-    setData(data);
-    setError(error);
-    setLoading(false);
+    let query = supabase.from(tableName).select("*");
+
+    for (const [column, value] of Object.entries(filters)) {
+      if (Array.isArray(value)) {
+        query = query.in(column, value);
+      } else {
+        query = query.eq(column, value);
+      }
+    }
+    try {
+      const { data, error } = await query;
+      if (error) throw error;
+      setData(data || []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function create(newItem) {
@@ -42,15 +56,19 @@ export default function useSupabase(tableName) {
     return { data, error };
   }
 
-  async function remove(id) {
+  async function remove(ids) {
+    if (!Array.isArray(ids)) ids = [ids];
+
     const { data, error } = await supabase
       .from(tableName)
       .delete()
-      .eq("id", id)
+      .in("id", ids)
       .select();
+
     if (data) {
-      setData((prev) => prev?.filter((item) => item.id !== id) || null);
+      setData((prev) => prev?.filter((item) => !ids.includes(item.id)) || null);
     }
+
     return { data, error };
   }
 
@@ -58,7 +76,7 @@ export default function useSupabase(tableName) {
     data,
     loading,
     error,
-    fetchAll,
+    fetchData,
     create,
     update,
     remove,
