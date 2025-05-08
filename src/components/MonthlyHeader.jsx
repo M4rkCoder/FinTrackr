@@ -13,7 +13,7 @@ export default function MonthlyHeader({ handleMonthChange, ...search }) {
           {" "}
           <ChevronLeft />{" "}
         </button>
-        <span>
+        <span className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
           {search.year}년 {search.month}월
         </span>
         <button

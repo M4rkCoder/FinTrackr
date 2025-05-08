@@ -86,6 +86,7 @@ export default function TransactionTable({ data, onRemove, onEdit }) {
             <Checkbox
               checked={isAllSelected}
               ref={headerCheckboxRef}
+              onClick={(e) => e.stopPropagation()}
               onCheckedChange={toggleSelectAll}
               aria-label="전체 선택"
             />
@@ -95,6 +96,7 @@ export default function TransactionTable({ data, onRemove, onEdit }) {
           <div className="flex justify-center">
             <Checkbox
               checked={selectedRowIds.has(row.original.id)}
+              onClick={(e) => e.stopPropagation()}
               onCheckedChange={() => toggleSelectRow(row.original.id)}
               aria-label="행 선택"
             />
@@ -103,7 +105,7 @@ export default function TransactionTable({ data, onRemove, onEdit }) {
         size: 50,
       },
       {
-        accessorKey: "day",
+        accessorKey: "date",
         header: "날짜",
         cell: (info) => {
           const date = new Date(info.getValue());
@@ -225,7 +227,6 @@ export default function TransactionTable({ data, onRemove, onEdit }) {
               <TableRow
                 key={row.id}
                 onClick={() => {
-                  console.log("클릭됨", row.original);
                   onEdit(row.original);
                 }}
                 className="cursor-pointer hover:bg-zinc-100"

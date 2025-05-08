@@ -17,6 +17,9 @@ export default function useSupabase(tableName) {
         query = query.eq(column, value);
       }
     }
+    if (["transactions", "monthly_transaction"].includes(tableName)) {
+      query = query.order("date", { ascending: true });
+    }
     try {
       const { data, error } = await query;
       if (error) throw error;
@@ -45,12 +48,11 @@ export default function useSupabase(tableName) {
       .update(updates)
       .eq("id", id)
       .select();
-    if (data) {
+    if (!error && Array.isArray(data) && data.length > 0) {
+      const updatedItem = data[0];
       setData(
         (prev) =>
-          prev?.map((item) =>
-            item.id === id ? { ...item, ...updates } : item
-          ) || null
+          prev?.map((item) => (item.id === id ? updatedItem : item)) || null
       );
     }
     return { data, error };

@@ -46,45 +46,48 @@ const formSchema = z.object({
   remarks: z.string().optional(),
 });
 
+const defaultValues = {
+  date: new Date().toISOString().split("T")[0],
+  category: { sub_category: "", id: "" },
+  amount: "",
+  description: "",
+  remarks: "",
+};
+
 export default function TransactionModal({
   open,
   onOpenChange,
-  editRow,
+  editRow = null,
   onAddOrUpdate,
   update,
 }) {
   const [categories, setCategories] = useState([]);
   const [formattedAmount, setFormattedAmount] = useState("");
 
-  useEffect(() => {
-    supabase
-      .from("categories")
-      .select(
-        `id, sub_category, emoji, main_categories(id, main_category), types(id, type) `
-      )
-      .then(({ data }) => {
-        if (data) setCategories(data);
-      });
-  }, []);
-
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      date: new Date().toISOString().split("T")[0],
-      category: { sub_category: "", id: "" },
-      amount: "",
-      description: "",
-      remarks: "",
-    },
+    defaultValues,
   });
 
   useEffect(() => {
-    if (editRow) {
+    const fetchCategories = async () => {
+      const { data } = await supabase
+        .from("categories")
+        .select(
+          `id, sub_category, emoji, main_categories(id, main_category), types(id, type)`
+        );
+      if (data) setCategories(data);
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    if (open && editRow) {
       form.reset({
-        date: new Date(editRow.day).toISOString().split("T")[0],
+        date: new Date(editRow.date).toISOString().split("T")[0],
         category: {
           sub_category: editRow.sub_category,
-          id: editRow.id,
+          id: editRow.category_id,
         },
         amount: String(editRow.amount),
         description: editRow.description || "",
@@ -92,36 +95,57 @@ export default function TransactionModal({
       });
       setFormattedAmount(Number(editRow.amount).toLocaleString());
     }
-  }, [editRow, form]);
+  }, [open, editRow, form]);
+
+  useEffect(() => {
+    if (!open) {
+      form.reset(defaultValues);
+      setFormattedAmount("");
+    }
+  }, [open]);
 
   const onSubmit = async (data) => {
-    const { date, category, amount, description, remarks } = data;
     const payload = {
-      date: date,
-      category_id: category.id,
-      amount: Number(amount.replace(/,/g, "")),
-      description: description || null,
-      remarks: remarks || null,
+      date: data.date,
+      category_id: data.category.id,
+      amount: Number(data.amount.replace(/,/g, "")),
+      description: data.description || null,
+      remarks: data.remarks || null,
     };
+
+    let error = null;
+
     if (editRow) {
-      const res = await update(editRow.id, payload);
-      error = res.error;
+      const id = editRow.id;
+      const res = await update(id, payload);
+      error = res?.error;
     } else {
       const res = await supabase.from("transactions").insert([payload]);
-      error = res.error;
+      error = res?.error;
     }
+
     if (error) {
       console.error("저장 실패:", error);
       alert("가계부 입력 오류");
       return;
     }
-    alert("가계부 입력 완료");
-    onAddOrUpdate?.();
-    form.reset();
-    setFormattedAmount("");
+
+    alert(editRow ? "수정 완료" : "저장 완료");
+    onAddOrUpdate?.(); // 부모에 상태 갱신 요청
     onOpenChange(false);
   };
 
+  const handleClose = () => {
+    form.reset({
+      date: new Date().toISOString().split("T")[0],
+      category: { sub_category: "", id: "" },
+      amount: "",
+      description: "",
+      remarks: "",
+    });
+    setFormattedAmount("");
+    onOpenChange(false);
+  };
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl">
@@ -167,13 +191,13 @@ export default function TransactionModal({
                         <Input
                           readOnly
                           value={
-                            field.value
+                            field.value?.sub_category
                               ? `${
                                   categories.find(
                                     (cat) =>
                                       cat.sub_category ===
                                       field.value.sub_category
-                                  )?.emoji || " "
+                                  )?.emoji || ""
                                 } ${field.value.sub_category}`
                               : ""
                           }
@@ -186,21 +210,18 @@ export default function TransactionModal({
                         className="max-h-60 overflow-y-auto"
                         onWheel={(e) => e.stopPropagation()}
                       >
-                        <CommandInput
-                          placeholder="카테고리 검색..."
-                          className=""
-                        />
+                        <CommandInput placeholder="카테고리 검색..." />
                         <CommandList>
                           <CommandEmpty>해당 카테고리가 없습니다.</CommandEmpty>
                           {categories.map((cat) => (
                             <CommandItem
                               key={cat.id}
-                              onSelect={() => {
+                              onSelect={() =>
                                 field.onChange({
                                   sub_category: cat.sub_category,
                                   id: cat.id,
-                                });
-                              }}
+                                })
+                              }
                               className="flex items-center gap-2"
                             >
                               <span>{cat.emoji || " "}</span>
@@ -219,7 +240,6 @@ export default function TransactionModal({
                       </Command>
                     </PopoverContent>
                   </Popover>
-
                   <FormMessage />
                 </FormItem>
               )}
@@ -238,10 +258,9 @@ export default function TransactionModal({
                       placeholder="예: 12000"
                       value={formattedAmount}
                       onChange={(e) => {
-                        const rawValue = e.target.value.replace(/[^0-9]/g, "");
-                        const formatted = Number(rawValue).toLocaleString();
-                        setFormattedAmount(formatted);
-                        field.onChange(rawValue);
+                        const raw = e.target.value.replace(/[^0-9]/g, "");
+                        setFormattedAmount(Number(raw).toLocaleString());
+                        field.onChange(raw);
                       }}
                     />
                   </FormControl>

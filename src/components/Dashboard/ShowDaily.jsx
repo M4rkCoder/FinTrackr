@@ -23,15 +23,15 @@ export default function ShowDaily({ date, onClose }) {
 
   useEffect(() => {
     if (date) {
-      fetchData({ day: date });
+      fetchData({ date: date });
     }
   }, [date]);
 
   const dailyIncome = data.filter(
-    (item) => item.day === date && item.type === "수입"
+    (item) => item.date === date && item.type === "수입"
   );
   const dailyExpense = data.filter(
-    (item) => item.day === date && item.type === "지출"
+    (item) => item.date === date && item.type === "지출"
   );
 
   const renderTable = (title, transactions) => {

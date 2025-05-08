@@ -11,8 +11,8 @@ import {
 export default function ChartBar({ data, onBarClick }) {
   const [toggle, setToggle] = useState("expense");
   const chartData = data.map((item) => ({
-    day: new Date(item.day).getDate() + "일",
-    originalDate: item.day,
+    date: new Date(item.date).getDate() + "일",
+    originalDate: item.date,
     income: item.daily_income,
     expense: item.daily_expense,
   }));
@@ -50,7 +50,12 @@ export default function ChartBar({ data, onBarClick }) {
           data={chartData}
           margin={{ top: 20, right: 30, bottom: 20, left: 30 }}
         >
-          <XAxis dataKey="day" interval={0} axisLine={false} tickLine={false} />
+          <XAxis
+            dataKey="date"
+            interval={0}
+            axisLine={false}
+            tickLine={false}
+          />
           <YAxis
             tickFormatter={(v) => v.toLocaleString()}
             axisLine={false}

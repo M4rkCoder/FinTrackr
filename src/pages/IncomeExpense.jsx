@@ -31,6 +31,13 @@ function IncomeExpense({ search, handleMonthChange }) {
     setOpen(true);
   };
 
+  const handleModalOpenChange = (open) => {
+    setOpen(open);
+    if (!open) {
+      setEditRow(null);
+    }
+  };
+
   useEffect(() => {
     fetchData({ month: `${year}-${month.toString().padStart(2, "0")}-01` });
   }, [year, month]);
@@ -46,7 +53,7 @@ function IncomeExpense({ search, handleMonthChange }) {
       />
       <TransactionModal
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={handleModalOpenChange}
         onAddOrUpdate={async () => {
           await fetchData({
             month: `${year}-${month.toString().padStart(2, "0")}-01`,

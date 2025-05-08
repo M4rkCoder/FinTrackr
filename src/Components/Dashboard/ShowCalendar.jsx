@@ -66,7 +66,9 @@ export default function ShowCalendar({
           tileContent={({ date, view }) => {
             if (view === "month") {
               const formattedDate = format(date, "yyyy-MM-dd");
-              const dailyData = data.find((item) => item.day === formattedDate);
+              const dailyData = data.find(
+                (item) => item.date === formattedDate
+              );
 
               if (!dailyData) return null;
 
