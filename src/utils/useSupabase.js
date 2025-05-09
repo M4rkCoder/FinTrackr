@@ -6,9 +6,9 @@ export default function useSupabase(tableName) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  async function fetchData(filters = {}) {
+  async function fetchData(filters = {}, select = "*") {
     setLoading(true);
-    let query = supabase.from(tableName).select("*");
+    let query = supabase.from(tableName).select(select);
 
     for (const [column, value] of Object.entries(filters)) {
       if (Array.isArray(value)) {
@@ -24,8 +24,10 @@ export default function useSupabase(tableName) {
       const { data, error } = await query;
       if (error) throw error;
       setData(data || []);
+      return data || [];
     } catch (err) {
       setError(err.message);
+      return null;
     } finally {
       setLoading(false);
     }
