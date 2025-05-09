@@ -28,7 +28,10 @@ export default function NavBar() {
             </Link>
           </li>
           <li>자산</li>
-          <li>설정</li>
+          <Link to="/settings" className="relative group">
+            <span className={textCss}>설정</span>
+            <span className={underCss}></span>
+          </Link>
         </ul>
       </div>
     </nav>

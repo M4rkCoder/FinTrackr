@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard.jsx";
 import IncomeExpense from "./pages/IncomeExpense.jsx";
 import NavBar from "./components/NavBar/NavBar.jsx";
+import Settings from "./pages/Settings.jsx";
 import "./App.css";
 
 function App() {
@@ -82,6 +83,7 @@ function App() {
             />
           }
         />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </Router>
   );

@@ -55,11 +55,9 @@ function IncomeExpense({ search, handleMonthChange }) {
         open={open}
         onOpenChange={handleModalOpenChange}
         onAddOrUpdate={async () => {
-          await fetchData(
-            (filters = {
-              month: `${year}-${month.toString().padStart(2, "0")}-01`,
-            })
-          );
+          await fetchData({
+            month: `${year}-${month.toString().padStart(2, "0")}-01`,
+          });
           setEditRow(null);
         }}
         editRow={editRow}

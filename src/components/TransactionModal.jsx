@@ -34,7 +34,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { supabase } from "../utils/supabase.js";
-// import useSupabase from "@/utils/useSupabase.js";
 
 const formSchema = z.object({
   date: z.coerce.date({ message: "날짜를 선택해주세요" }),
@@ -64,7 +63,6 @@ export default function TransactionModal({
 }) {
   const [categories, setCategories] = useState([]);
   const [formattedAmount, setFormattedAmount] = useState("");
-  // const { data, fetchData } = useSupabase("categories");
 
   const form = useForm({
     resolver: zodResolver(formSchema),
