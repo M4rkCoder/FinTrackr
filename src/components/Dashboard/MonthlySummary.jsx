@@ -14,7 +14,7 @@ export default function Monthly_Summary({ year, month }) {
 
   useEffect(() => {
     const formattedMonth = `${year}-${month.toString().padStart(2, "0")}-01`;
-    fetchData({ month: formattedMonth });
+    fetchData({ filters: { month: formattedMonth } });
   }, [year, month]);
 
   if (loading) return <p>⏳ 로딩 중...</p>;

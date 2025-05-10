@@ -32,7 +32,7 @@ export default function ShowCalendar({
 
   useEffect(() => {
     const formattedMonth = `${year}-${month.toString().padStart(2, "0")}-01`;
-    fetchData({ month: formattedMonth });
+    fetchData({ filters: { month: formattedMonth } });
   }, [year, month]);
 
   const handleCalendarChange = (newDate) => {

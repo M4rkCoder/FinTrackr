@@ -23,7 +23,7 @@ export default function ShowDaily({ date, onClose }) {
 
   useEffect(() => {
     if (date) {
-      fetchData({ date: date });
+      fetchData({ filters: { date: date } });
     }
   }, [date]);
 

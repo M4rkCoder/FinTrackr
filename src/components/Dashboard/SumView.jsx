@@ -11,7 +11,9 @@ export default function SumView({ year, month }) {
   );
 
   useEffect(() => {
-    fetchData({ month: `${year}-${month.toString().padStart(2, "0")}-01` });
+    fetchData({
+      filters: { month: `${year}-${month.toString().padStart(2, "0")}-01` },
+    });
   }, [year, month]);
   if (loading) return <p>⏳ 로딩 중...</p>;
   if (error) return <p>❌ 오류 발생: {error}</p>;

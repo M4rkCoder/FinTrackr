@@ -1,11 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 
 export default function NavBar() {
-  const textCss =
-    "text-gray-700 group-hover:text-brand transition group-hover:font-semibold";
-  const underCss =
-    "absolute left-0 bottom-0 w-0 h-0.5 bg-brand group-hover:w-full transition-all duration-300";
+  const baseTextCss = "text-gray-700 transition";
+  const activeTextCss = "text-brand font-semibold";
+  const underCssBase =
+    "absolute left-0 bottom-0 h-0.5 bg-brand transition-all duration-300";
+
   return (
     <nav className="font-noto bg-white shadow-md w-full z-50 px-4">
       <div className="flex items-center h-16">
@@ -14,24 +15,68 @@ export default function NavBar() {
             FinLog
           </div>
         </Link>
-        <ul className="flex flex-row items-center spce-x-6 gap-6">
+        <ul className="flex flex-row items-center gap-6">
           <li>
-            <Link to="/dashboard" className="relative group">
-              <span className={textCss}>한 눈에 보기</span>
-              <span className={underCss}></span>
-            </Link>
+            <NavLink to="/dashboard" className="relative group">
+              {({ isActive }) => (
+                <>
+                  <span
+                    className={`${baseTextCss} group-hover:text-brand ${
+                      isActive ? activeTextCss : ""
+                    }`}
+                  >
+                    한 눈에 보기
+                  </span>
+                  <span
+                    className={`${underCssBase} ${
+                      isActive ? "w-full" : "w-0"
+                    } group-hover:w-full`}
+                  ></span>
+                </>
+              )}
+            </NavLink>
           </li>
           <li>
-            <Link to="/income-expense" className="relative group">
-              <span className={textCss}>수입/지출</span>
-              <span className={underCss}></span>
-            </Link>
+            <NavLink to="/income-expense" className="relative group">
+              {({ isActive }) => (
+                <>
+                  <span
+                    className={`${baseTextCss} group-hover:text-brand ${
+                      isActive ? activeTextCss : ""
+                    }`}
+                  >
+                    수입/지출
+                  </span>
+                  <span
+                    className={`${underCssBase} ${
+                      isActive ? "w-full" : "w-0"
+                    } group-hover:w-full`}
+                  ></span>
+                </>
+              )}
+            </NavLink>
           </li>
-          <li>자산</li>
-          <Link to="/settings" className="relative group">
-            <span className={textCss}>설정</span>
-            <span className={underCss}></span>
-          </Link>
+          <li className="text-gray-500">저축/투자</li>
+          <li>
+            <NavLink to="/settings" className="relative group">
+              {({ isActive }) => (
+                <>
+                  <span
+                    className={`${baseTextCss} group-hover:text-brand ${
+                      isActive ? activeTextCss : ""
+                    }`}
+                  >
+                    설정
+                  </span>
+                  <span
+                    className={`${underCssBase} ${
+                      isActive ? "w-full" : "w-0"
+                    } group-hover:w-full`}
+                  ></span>
+                </>
+              )}
+            </NavLink>
+          </li>
         </ul>
       </div>
     </nav>

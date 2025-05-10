@@ -20,7 +20,9 @@ function IncomeExpense({ search, handleMonthChange }) {
     if (!error) {
       alert("기록 삭제 완료");
       await fetchData({
-        month: `${year}-${month.toString().padStart(2, "0")}-01`,
+        filters: {
+          month: `${year}-${month.toString().padStart(2, "0")}-01`,
+        },
       });
     }
     return { data, error };
@@ -39,7 +41,9 @@ function IncomeExpense({ search, handleMonthChange }) {
   };
 
   useEffect(() => {
-    fetchData({ month: `${year}-${month.toString().padStart(2, "0")}-01` });
+    fetchData({
+      filters: { month: `${year}-${month.toString().padStart(2, "0")}-01` },
+    });
   }, [year, month]);
   if (loading) return <p>⏳ 로딩 중...</p>;
   if (error) return <p>❌ 오류 발생: {error}</p>;
@@ -56,7 +60,9 @@ function IncomeExpense({ search, handleMonthChange }) {
         onOpenChange={handleModalOpenChange}
         onAddOrUpdate={async () => {
           await fetchData({
-            month: `${year}-${month.toString().padStart(2, "0")}-01`,
+            filters: {
+              month: `${year}-${month.toString().padStart(2, "0")}-01`,
+            },
           });
           setEditRow(null);
         }}

@@ -34,6 +34,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { supabase } from "../utils/supabase.js";
+import useSupabase from "@/utils/useSupabase.js";
 
 const formSchema = z.object({
   date: z.coerce.date({ message: "날짜를 선택해주세요" }),
@@ -61,8 +62,8 @@ export default function TransactionModal({
   onAddOrUpdate,
   update,
 }) {
-  const [categories, setCategories] = useState([]);
   const [formattedAmount, setFormattedAmount] = useState("");
+  const { data: categories, fetchData } = useSupabase("categories");
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -70,15 +71,9 @@ export default function TransactionModal({
   });
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      const { data } = await supabase
-        .from("categories")
-        .select(
-          `id, sub_category, emoji, main_categories(id, main_category), types(id, type)`
-        );
-      if (data) setCategories(data);
-    };
-    fetchCategories();
+    fetchData({
+      select: `id, sub_category, emoji, main_categories(id, main_category), types(id, type)`,
+    });
   }, []);
 
   useEffect(() => {

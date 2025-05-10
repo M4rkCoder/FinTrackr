@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emoji-mart/data": "^1.2.1",
+    "@emoji-mart/react": "^1.1.1",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@hookform/resolvers": "^5.0.1",
@@ -19,6 +21,8 @@
     "@radix-ui/react-popover": "^1.1.11",
     "@radix-ui/react-select": "^2.2.2",
     "@radix-ui/react-slot": "^1.2.0",
+    "@radix-ui/react-toggle": "^1.1.8",
+    "@radix-ui/react-toggle-group": "^1.1.9",
     "@supabase/supabase-js": "^2.49.1",
     "@tailwindcss/vite": "^4.1.4",
     "@tanstack/react-table": "^8.21.3",
@@ -27,6 +31,8 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
+    "emoji-mart": "^5.6.0",
+    "emoji-picker-react": "^4.12.2",
     "lucide-react": "^0.503.0",
     "react": "^19.0.0",
     "react-calendar": "^5.1.0",

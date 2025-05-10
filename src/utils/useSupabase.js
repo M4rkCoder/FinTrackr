@@ -6,9 +6,14 @@ export default function useSupabase(tableName) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  async function fetchData(filters = {}, select = "*") {
+  async function fetchData({
+    filters = {},
+    select = "*",
+    orderBy = null,
+    table = tableName, // 기본값을 기존 tableName으로
+  }) {
     setLoading(true);
-    let query = supabase.from(tableName).select(select);
+    let query = supabase.from(table).select(select);
 
     for (const [column, value] of Object.entries(filters)) {
       if (Array.isArray(value)) {
@@ -17,8 +22,13 @@ export default function useSupabase(tableName) {
         query = query.eq(column, value);
       }
     }
+
     if (["transactions", "monthly_transaction"].includes(tableName)) {
       query = query.order("date", { ascending: true });
+    }
+
+    if (orderBy) {
+      query = query.order(orderBy.column, { ascending: orderBy.ascending });
     }
     try {
       const { data, error } = await query;
