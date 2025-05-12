@@ -3,6 +3,7 @@ import TransactionTable from "../components/IncomeExpense/TransactionTable.jsx";
 import MonthlyHeader from "../components/MonthlyHeader.jsx";
 import TransactionModal from "@/components/TransactionModal.jsx";
 import useSupabase from "@/utils/useSupabase.js";
+import { DateRangePicker } from "@/components/ui/date-range-picker.jsx";
 import { Pencil } from "lucide-react";
 
 function IncomeExpense({ search, handleMonthChange }) {
@@ -50,6 +51,7 @@ function IncomeExpense({ search, handleMonthChange }) {
   return (
     <section>
       <MonthlyHeader {...search} handleMonthChange={handleMonthChange} />
+      <DateRangePicker />
       <TransactionTable
         data={data}
         onRemove={handleRemove}

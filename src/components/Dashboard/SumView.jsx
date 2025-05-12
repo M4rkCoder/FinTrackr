@@ -32,6 +32,7 @@ export default function SumView({ year, month }) {
           return (
             <SubSum
               key={item.sub_category}
+              emoji={item.emoji}
               label={item.sub_category}
               data={item.total_amount}
             />
