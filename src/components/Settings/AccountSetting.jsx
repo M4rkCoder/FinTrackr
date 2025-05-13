@@ -11,7 +11,7 @@ export default function AccountSetting() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>가계부 사용자 설정</CardTitle>
+        <CardTitle className="text-2xl">가계부 사용자 설정</CardTitle>
         <CardDescription>가계부 사용자 초대 및 설정합니다.</CardDescription>
       </CardHeader>
       <CardContent>

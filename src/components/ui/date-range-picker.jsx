@@ -35,15 +35,15 @@ const getDateAdjustedForTimezone = (dateInput) => {
 };
 
 const PRESETS = [
-  { name: "today", label: "Today" },
-  { name: "yesterday", label: "Yesterday" },
-  { name: "last7", label: "Last 7 days" },
-  { name: "last14", label: "Last 14 days" },
-  { name: "last30", label: "Last 30 days" },
-  { name: "thisWeek", label: "This Week" },
-  { name: "lastWeek", label: "Last Week" },
-  { name: "thisMonth", label: "This Month" },
-  { name: "lastMonth", label: "Last Month" },
+  { name: "today", label: "오늘" },
+  { name: "yesterday", label: "어제" },
+  { name: "last7", label: "지난 7일" },
+  { name: "last14", label: "지난 2주" },
+  { name: "last30", label: "지난 30일" },
+  { name: "thisWeek", label: "이번 주" },
+  { name: "lastWeek", label: "지난 주" },
+  { name: "thisMonth", label: "이번 달" },
+  { name: "lastMonth", label: "지난 달" },
 ];
 
 export const DateRangePicker = ({
@@ -355,7 +355,7 @@ export const DateRangePicker = ({
                       }}
                       id="compare-mode"
                     />
-                    <Label htmlFor="compare-mode">Compare</Label>
+                    <Label htmlFor="compare-mode">비교</Label>
                   </div>
                 )}
                 <div className="flex flex-col gap-2">

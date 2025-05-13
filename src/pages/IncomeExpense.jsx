@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import TransactionTable from "../components/IncomeExpense/TransactionTable.jsx";
 import MonthlyHeader from "../components/MonthlyHeader.jsx";
-import TransactionModal from "@/components/TransactionModal.jsx";
+import TransactionSheet from "@/components/IncomeExpense/TransactionSheet.jsx";
 import useSupabase from "@/utils/useSupabase.js";
 import { DateRangePicker } from "@/components/ui/date-range-picker.jsx";
-import { Pencil } from "lucide-react";
 
 function IncomeExpense({ search, handleMonthChange }) {
   const { year, month } = search;
@@ -50,14 +49,22 @@ function IncomeExpense({ search, handleMonthChange }) {
   if (error) return <p>❌ 오류 발생: {error}</p>;
   return (
     <section>
-      <MonthlyHeader {...search} handleMonthChange={handleMonthChange} />
-      <DateRangePicker />
+      <div className="flex flex-col w-[80%] justify-between mx-auto mt-4">
+        <h2 className="text-3xl font-semibold tracking-tight pb-2 text-left">
+          수입/지출
+        </h2>
+        <MonthlyHeader {...search} handleMonthChange={handleMonthChange} />
+      </div>
+      <div className="flex justify-end w-[80%] mx-auto mt-3">
+        <DateRangePicker />
+      </div>
       <TransactionTable
         data={data}
         onRemove={handleRemove}
         onEdit={handleEdit}
+        onOpenChange={handleModalOpenChange}
       />
-      <TransactionModal
+      <TransactionSheet
         open={open}
         onOpenChange={handleModalOpenChange}
         onAddOrUpdate={async () => {
@@ -71,12 +78,6 @@ function IncomeExpense({ search, handleMonthChange }) {
         editRow={editRow}
         update={update}
       />
-      <button
-        onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 bg-brand hover:bg-dark text-light rounded-full p-4 shadow-lg text-xl"
-      >
-        <Pencil size={24} />
-      </button>
     </section>
   );
 }

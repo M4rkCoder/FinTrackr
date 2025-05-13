@@ -17,9 +17,14 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 
-export default function TransactionTable({ data, onRemove, onEdit }) {
+export default function TransactionTable({
+  data,
+  onRemove,
+  onEdit,
+  onOpenChange,
+}) {
   const [filter, setFilter] = useState("");
   const [selectedRowIds, setSelectedRowIds] = useState(new Set());
   const headerCheckboxRef = useRef(null);
@@ -188,31 +193,40 @@ export default function TransactionTable({ data, onRemove, onEdit }) {
   return (
     <div className="flex flex-col items-center mt-6 space-y-4 w-full">
       {/* 🔍 필터 인풋 */}
-      <div className="w-[80%] flex gap-2">
+      <div className="w-[80%] flex justify-between gap-2">
         <Input
           placeholder="내역, 대분류, 소분류 검색..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
+          className="w-[60%]"
         />
-        <Button
-          variant="default"
-          className="bg-black text-white hover:bg-zinc-800"
-          disabled={selectedRowIds.size === 0}
-          onClick={handleDeleteSelected}
-        >
-          <Trash2 size={16} className="mr-1" />
-          삭제
-        </Button>
+        <div className="flex flex-row gap-2">
+          <Button
+            variant="default"
+            disabled={selectedRowIds.size === 0}
+            onClick={handleDeleteSelected}
+          >
+            <Trash2 size={16} className="mr-1" />
+            삭제
+          </Button>
+          <Button
+            variant="default"
+            onClick={onOpenChange}
+            className="bg-black hover:bg-dark text-light gap-2"
+          >
+            <Pencil size={16} /> 입력
+          </Button>
+        </div>
       </div>
 
       {/* 📋 테이블 */}
       <div className="w-[80%] rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-gray-100">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className="font-semibold">
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext()

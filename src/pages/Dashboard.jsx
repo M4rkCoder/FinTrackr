@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ShowCalendar from "../components/Dashboard/ShowCalendar.jsx";
 import MonthlyHeader from "../components/MonthlyHeader.jsx";
 import MonthlySummary from "../components/Dashboard/MonthlySummary.jsx";
-import TransactionModal from "@/components/TransactionModal.jsx";
+import TransactionSheet from "@/components/IncomeExpense/TransactionSheet.jsx";
 import { Pencil } from "lucide-react";
 import "./MonthlyCalendar.css";
 
@@ -29,7 +29,7 @@ function Dashboard({
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
         />
-        <TransactionModal open={open} onOpenChange={setOpen} />
+        <TransactionSheet open={open} onOpenChange={setOpen} />
         <button
           onClick={() => setOpen(true)}
           className="fixed bottom-6 right-6 bg-brand hover:bg-dark text-light rounded-full p-4 shadow-lg text-xl"

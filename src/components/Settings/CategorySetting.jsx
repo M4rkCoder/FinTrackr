@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import useSupabase from "@/utils/useSupabase.js";
-import EditCategoryModal from "../EditCategoryModal";
+import CategorySheet from "./CategorySheet";
 
 export default function CategorySetting() {
   const [selectedType, setSelectedType] = useState("지출");
@@ -71,7 +71,6 @@ export default function CategorySetting() {
   };
   let error = null;
   const handleSave = async (updated) => {
-    console.log(updated);
     if (updated) {
       const id = updated.id;
       const res = await update(updated.id, updated);
@@ -93,9 +92,9 @@ export default function CategorySetting() {
     setModalOpen(false);
   };
   return (
-    <Card className="w-full">
+    <Card className="w-full my-6">
       <CardHeader>
-        <CardTitle>카테고리 설정</CardTitle>
+        <CardTitle className="text-2xl">카테고리 설정</CardTitle>
         <CardDescription>카테고리를 편집합니다.</CardDescription>
       </CardHeader>
 
@@ -134,6 +133,7 @@ export default function CategorySetting() {
               key={cat}
               variant={selectedMainCategory === cat ? "default" : "outline"}
               onClick={() => setSelectedMainCategory(cat)}
+              className="text-lg"
             >
               {cat}
             </Button>
@@ -154,8 +154,10 @@ export default function CategorySetting() {
               key={item.id}
               variant="outline"
               onClick={() => handleEdit(item)}
+              className="text-lg"
             >
-              {item.emoji} {item.sub_category}
+              <span>{item.emoji}</span>
+              <span>{item.sub_category}</span>
             </Button>
           ))}
           <Button variant="secondary">
@@ -163,11 +165,13 @@ export default function CategorySetting() {
           </Button>
         </div>
       </CardContent>
-      <EditCategoryModal
+      <CategorySheet
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleSave}
         category={selectedCategory}
+        selectedType={selectedType}
+        setSelectedType={setSelectedType}
       />
       <CardFooter className="flex justify-between" />
     </Card>
