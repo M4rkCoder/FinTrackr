@@ -250,50 +250,51 @@ export default function TransactionSheet({
                   </FormItem>
                 )}
               />
-              {/* 날짜 */}
-              <Controller
-                control={form.control}
-                name="date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-lg font-semibold">
-                      날짜
-                    </FormLabel>
-                    <FormControl>
-                      <div>
-                        <Input type="date" {...field} />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* 금액 */}
-              <Controller
-                control={form.control}
-                name="amount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-lg font-semibold">
-                      금액
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="예: 12000"
-                        value={formattedAmount}
-                        onChange={(e) => {
-                          const raw = e.target.value.replace(/[^0-9]/g, "");
-                          setFormattedAmount(Number(raw).toLocaleString());
-                          field.onChange(raw);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+              <div className="flex flex-row justify-between mx-auto">
+                {/* 날짜 */}
+                <Controller
+                  control={form.control}
+                  name="date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-lg font-semibold">
+                        날짜
+                      </FormLabel>
+                      <FormControl>
+                        <div>
+                          <Input type="date" {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* 금액 */}
+                <Controller
+                  control={form.control}
+                  name="amount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-lg font-semibold">
+                        금액
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="예: 12000"
+                          value={formattedAmount}
+                          onChange={(e) => {
+                            const raw = e.target.value.replace(/[^0-9]/g, "");
+                            setFormattedAmount(Number(raw).toLocaleString());
+                            field.onChange(raw);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               {/* 내역 */}
               <FormField
                 control={form.control}

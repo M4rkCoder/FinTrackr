@@ -17,6 +17,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DateInput } from "../ui/date-input";
 import { Trash2, Pencil } from "lucide-react";
 
 export default function TransactionTable({
@@ -192,6 +193,7 @@ export default function TransactionTable({
 
   return (
     <div className="flex flex-col items-center mt-6 space-y-4 w-full">
+      <DateInput />
       {/* 🔍 필터 인풋 */}
       <div className="w-[80%] flex justify-between gap-2">
         <Input
