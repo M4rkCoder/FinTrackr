@@ -56,7 +56,24 @@ export default function NavBar() {
               )}
             </NavLink>
           </li>
-          <li className="text-gray-500">저축/투자</li>
+          <NavLink to="/save-investment" className="relative group">
+            {({ isActive }) => (
+              <>
+                <span
+                  className={`${baseTextCss} group-hover:text-brand ${
+                    isActive ? activeTextCss : ""
+                  }`}
+                >
+                  저축/투자
+                </span>
+                <span
+                  className={`${underCssBase} ${
+                    isActive ? "w-full" : "w-0"
+                  } group-hover:w-full`}
+                ></span>
+              </>
+            )}
+          </NavLink>
           <li>
             <NavLink to="/settings" className="relative group">
               {({ isActive }) => (

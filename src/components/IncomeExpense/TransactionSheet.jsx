@@ -36,17 +36,24 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "@/utils/supabase.js";
 import useSupabase from "@/utils/useSupabase.js";
+import { DateInput } from "../ui/date-input";
+import { format } from "date-fns";
 
-const formSchema = z.object({
-  date: z.coerce.date({ message: "날짜를 선택해주세요" }),
-  category: z.object({
-    sub_category: z.string().min(1, "카테고리를 선택해주세요"),
-    id: z.string().min(1, "카테고리 ID 오류"),
-  }),
-  amount: z.string().min(1, "금액을 입력해주세요"),
-  description: z.string().optional(),
-  remarks: z.string().optional(),
-});
+const formSchema = z
+  .object({
+    date: z.coerce.date({ message: "날짜를 선택해주세요" }),
+    category: z.object({
+      sub_category: z.string().min(1, "카테고리를 선택해주세요"),
+      id: z.string().min(1, "카테고리 ID 오류"),
+    }),
+    amount: z.string().min(1, "금액을 입력해주세요"),
+    description: z.string().optional(),
+    remarks: z.string().optional(),
+  })
+  .refine((data) => data.category.sub_category && data.category.id, {
+    message: "카테고리를 선택해주세요",
+    path: ["category"],
+  });
 
 const defaultValues = {
   date: new Date().toISOString().split("T")[0],
@@ -104,13 +111,13 @@ export default function TransactionSheet({
 
   const onSubmit = async (data) => {
     const payload = {
-      date: data.date,
+      date: format(data.date, "yyyy-MM-dd"),
       category_id: data.category.id,
       amount: Number(data.amount.replace(/,/g, "")),
       description: data.description || null,
       remarks: data.remarks || null,
     };
-
+    console.log(form.formState.errors);
     let error = null;
 
     if (editRow) {
@@ -184,7 +191,7 @@ export default function TransactionSheet({
                 })}
               </ToggleGroup>
               {/* 카테고리 */}
-              <Controller
+              <FormField
                 control={form.control}
                 name="category"
                 render={({ field }) => (
@@ -246,35 +253,35 @@ export default function TransactionSheet({
                         )}
                       </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-sm text-red-500 min-h-[20px]" />
                   </FormItem>
                 )}
               />
               <div className="flex flex-row justify-between mx-auto">
-                {/* 날짜 */}
-                <Controller
-                  control={form.control}
-                  name="date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-lg font-semibold">
-                        날짜
-                      </FormLabel>
-                      <FormControl>
-                        <div>
-                          <Input type="date" {...field} />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="flex flex-col justify-start">
+                  {/* 날짜 */}
+                  <FormField
+                    control={form.control}
+                    name="date"
+                    render={({ field }) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className="text-lg font-semibold">
+                          날짜
+                        </FormLabel>
+                        <FormControl>
+                          <DateInput {...field} showCalendar={true} />
+                        </FormControl>
+                        <FormMessage className="text-sm text-red-500 min-h-[20px]" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 {/* 금액 */}
-                <Controller
+                <FormField
                   control={form.control}
                   name="amount"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="space-y-1">
                       <FormLabel className="text-lg font-semibold">
                         금액
                       </FormLabel>
@@ -290,7 +297,8 @@ export default function TransactionSheet({
                           }}
                         />
                       </FormControl>
-                      <FormMessage />
+
+                      <FormMessage className="text-sm text-red-500 min-h-[20px]" />
                     </FormItem>
                   )}
                 />

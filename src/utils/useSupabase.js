@@ -15,12 +15,21 @@ export default function useSupabase(tableName) {
     setLoading(true);
     let query = supabase.from(table).select(select);
 
-    for (const [column, value] of Object.entries(filters)) {
+    const { dateRange, ...restFilters } = filters;
+
+    for (const [column, value] of Object.entries(restFilters)) {
       if (Array.isArray(value)) {
         query = query.in(column, value);
       } else {
         query = query.eq(column, value);
       }
+    }
+
+    if (dateRange?.from) {
+      query = query.gte("date", dateRange.from);
+    }
+    if (dateRange?.to) {
+      query = query.lte("date", dateRange.to);
     }
 
     if (["transactions", "monthly_transaction"].includes(tableName)) {

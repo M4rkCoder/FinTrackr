@@ -54,7 +54,7 @@ export const DateRangePicker = ({
   onUpdate,
   align = "end",
   locale = "ko-KR",
-  showCompare = true,
+  showCompare = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -459,11 +459,13 @@ export const DateRangePicker = ({
                   selected={range}
                   numberOfMonths={isSmallScreen ? 1 : 2}
                   defaultMonth={
-                    new Date(
-                      new Date().setMonth(
-                        new Date().getMonth() - (isSmallScreen ? 0 : 1)
-                      )
-                    )
+                    initialDateFrom
+                      ? new Date(initialDateFrom)
+                      : new Date(
+                          new Date().setMonth(
+                            new Date().getMonth() - (isSmallScreen ? 0 : 1)
+                          )
+                        )
                   }
                   locale={ko}
                 />
@@ -493,7 +495,7 @@ export const DateRangePicker = ({
             }}
             variant="ghost"
           >
-            Cancel
+            취소
           </Button>
           <Button
             onClick={() => {
@@ -506,7 +508,7 @@ export const DateRangePicker = ({
               }
             }}
           >
-            Update
+            선택
           </Button>
         </div>
       </PopoverContent>

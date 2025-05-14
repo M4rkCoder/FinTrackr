@@ -193,7 +193,6 @@ export default function TransactionTable({
 
   return (
     <div className="flex flex-col items-center mt-6 space-y-4 w-full">
-      <DateInput />
       {/* 🔍 필터 인풋 */}
       <div className="w-[80%] flex justify-between gap-2">
         <Input

@@ -1,18 +1,26 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { ko } from "date-fns/locale";
+import { Calendar } from "@/components/ui/calendar";
+import { Calendar as CalendarIcon } from "lucide-react";
 
-const DateInput = ({ value, onChange }) => {
-  const [date, setDate] = React.useState(() => {
+const DateInput = ({ value, onChange, showCalendar = false }) => {
+  const [date, setDate] = useState(() => {
     const d = value ? new Date(value) : new Date();
     return {
       day: d.getDate(),
-      month: d.getMonth() + 1, // JavaScript months are 0-indexed
+      month: d.getMonth() + 1,
       year: d.getFullYear(),
     };
   });
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const inputWrapperRef = useRef(null);
+  const calendarRef = useRef(null);
   const monthRef = useRef(null);
   const dayRef = useRef(null);
   const yearRef = useRef(null);
+  const initialDate = useRef(date);
 
   useEffect(() => {
     const d = value ? new Date(value) : new Date();
@@ -23,41 +31,57 @@ const DateInput = ({ value, onChange }) => {
     });
   }, [value]);
 
-  const validateDate = (field, value) => {
+  // ⭐️ 외부 클릭 시 캘린더 닫기 이벤트
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(e.target) &&
+        inputWrapperRef.current &&
+        !inputWrapperRef.current.contains(e.target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  const validateDate = (field, val) => {
     if (
-      (field === "day" && (value < 1 || value > 31)) ||
-      (field === "month" && (value < 1 || value > 12)) ||
-      (field === "year" && (value < 1000 || value > 9999))
+      (field === "day" && (val < 1 || val > 31)) ||
+      (field === "month" && (val < 1 || val > 12)) ||
+      (field === "year" && (val < 1000 || val > 9999))
     ) {
       return false;
     }
-
-    // Validate the day of the month
-    const newDate = { ...date, [field]: value };
-    const d = new Date(newDate.year, newDate.month - 1, newDate.day);
+    const test = { ...date, [field]: val };
+    const d = new Date(test.year, test.month - 1, test.day);
     return (
-      d.getFullYear() === newDate.year &&
-      d.getMonth() + 1 === newDate.month &&
-      d.getDate() === newDate.day
+      d.getFullYear() === test.year &&
+      d.getMonth() + 1 === test.month &&
+      d.getDate() === test.day
     );
   };
 
   const handleInputChange = (field) => (e) => {
-    const newValue = e.target.value ? Number(e.target.value) : "";
-    const isValid =
-      typeof newValue === "number" && validateDate(field, newValue);
-
-    // If the new value is valid, update the date
-    const newDate = { ...date, [field]: newValue };
+    const newVal = Number(e.target.value);
+    const isValid = validateDate(field, newVal);
+    const newDate = { ...date, [field]: newVal };
     setDate(newDate);
 
-    // Only call onChange when the entry is valid
     if (isValid) {
       onChange(new Date(newDate.year, newDate.month - 1, newDate.day));
     }
   };
-
-  const initialDate = useRef(date);
 
   const handleBlur = (field) => (e) => {
     if (!e.target.value) {
@@ -65,24 +89,16 @@ const DateInput = ({ value, onChange }) => {
       return;
     }
 
-    const newValue = Number(e.target.value);
-    const isValid = validateDate(field, newValue);
-
-    if (!isValid) {
+    const newVal = Number(e.target.value);
+    if (!validateDate(field, newVal)) {
       setDate(initialDate.current);
     } else {
-      // If the new value is valid, update the initial value
-      initialDate.current = { ...date, [field]: newValue };
+      initialDate.current = { ...date, [field]: newVal };
     }
   };
-
   const handleKeyDown = (field) => (e) => {
-    // Allow command (or control) combinations
-    if (e.metaKey || e.ctrlKey) {
-      return;
-    }
+    if (e.metaKey || e.ctrlKey) return;
 
-    // Prevent non-numeric characters, excluding allowed keys
     if (
       !/^[0-9]$/.test(e.key) &&
       ![
@@ -167,8 +183,8 @@ const DateInput = ({ value, onChange }) => {
           e.currentTarget.selectionEnd === e.currentTarget.value.length)
       ) {
         e.preventDefault();
+        if (field === "year") monthRef.current?.focus();
         if (field === "month") dayRef.current?.focus();
-        if (field === "day") yearRef.current?.focus();
       }
     } else if (e.key === "ArrowLeft") {
       if (
@@ -177,67 +193,92 @@ const DateInput = ({ value, onChange }) => {
           e.currentTarget.selectionEnd === e.currentTarget.value.length)
       ) {
         e.preventDefault();
+        if (field === "month") yearRef.current?.focus();
         if (field === "day") monthRef.current?.focus();
-        if (field === "year") dayRef.current?.focus();
       }
     }
   };
 
+  const handleDaySelect = (selectedDate) => {
+    if (selectedDate) {
+      const newDate = {
+        year: selectedDate.getFullYear(),
+        month: selectedDate.getMonth() + 1,
+        day: selectedDate.getDate(),
+      };
+      setDate(newDate);
+      onChange(new Date(newDate.year, newDate.month - 1, newDate.day));
+      setIsOpen(false);
+    }
+  };
+
   return (
-    <div className="flex border rounded-lg items-center text-sm px-1">
-      <input
-        type="text"
-        ref={monthRef}
-        max={12}
-        maxLength={2}
-        value={date.month.toString()}
-        onChange={handleInputChange("month")}
-        onKeyDown={handleKeyDown("month")}
-        onFocus={(e) => {
-          if (window.innerWidth > 1024) {
-            e.target.select();
-          }
-        }}
-        onBlur={handleBlur("month")}
-        className="p-0 outline-none w-6 border-none text-center bg-transparent"
-        placeholder="M"
-      />
-      <span className="opacity-20 -mx-px">/</span>
-      <input
-        type="text"
-        ref={dayRef}
-        max={31}
-        maxLength={2}
-        value={date.day.toString()}
-        onChange={handleInputChange("day")}
-        onKeyDown={handleKeyDown("day")}
-        onFocus={(e) => {
-          if (window.innerWidth > 1024) {
-            e.target.select();
-          }
-        }}
-        onBlur={handleBlur("day")}
-        className="p-0 outline-none w-7 border-none text-center bg-transparent"
-        placeholder="D"
-      />
-      <span className="opacity-20 -mx-px">/</span>
-      <input
-        type="text"
-        ref={yearRef}
-        max={9999}
-        maxLength={4}
-        value={date.year.toString()}
-        onChange={handleInputChange("year")}
-        onKeyDown={handleKeyDown("year")}
-        onFocus={(e) => {
-          if (window.innerWidth > 1024) {
-            e.target.select();
-          }
-        }}
-        onBlur={handleBlur("year")}
-        className="p-0 outline-none w-12 border-none text-center bg-transparent"
-        placeholder="YYYY"
-      />
+    <div
+      ref={inputWrapperRef}
+      className="flex items-center text-sm gap-1 relative"
+    >
+      <div
+        className="flex border border-input rounded-lg items-center px-1 py-2 bg-white
+               focus-within:ring-2 focus-within:ring-ring/50 focus-within:border-ring focus-within:outline-none"
+      >
+        <input
+          type="text"
+          ref={yearRef}
+          value={date.year.toString()}
+          onChange={handleInputChange("year")}
+          onBlur={handleBlur("year")}
+          onKeyDown={handleKeyDown("year")}
+          className="w-12 text-center outline-none bg-transparent"
+          placeholder="YYYY"
+        />
+        <span className="opacity-30 -mx-px">/</span>
+        <input
+          type="text"
+          ref={monthRef}
+          value={date.month.toString()}
+          onChange={handleInputChange("month")}
+          onBlur={handleBlur("month")}
+          onKeyDown={handleKeyDown("month")}
+          className="w-6 text-center outline-none bg-transparent"
+          placeholder="MM"
+        />
+        <span className="opacity-30 -mx-px">/</span>
+        <input
+          type="text"
+          ref={dayRef}
+          value={date.day.toString()}
+          onChange={handleInputChange("day")}
+          onBlur={handleBlur("day")}
+          onKeyDown={handleKeyDown("day")}
+          className="p-0 w-6 text-center outline-none bg-transparent"
+          placeholder="DD"
+        />
+
+        {showCalendar && (
+          <button
+            type="button"
+            className="px-2 text-muted-foreground"
+            onClick={() => setIsOpen((prev) => !prev)}
+          >
+            <CalendarIcon size={15} />
+          </button>
+        )}
+      </div>
+
+      {showCalendar && isOpen && (
+        <div
+          ref={calendarRef}
+          className="absolute top-full mt-2 z-50 bg-white shadow rounded-md"
+        >
+          <Calendar
+            mode="single"
+            selected={new Date(date.year, date.month - 1, date.day)}
+            onSelect={handleDaySelect}
+            locale={ko}
+            initialFocus
+          />
+        </div>
+      )}
     </div>
   );
 };

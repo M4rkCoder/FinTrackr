@@ -6,14 +6,44 @@ import TransactionSheet from "@/components/IncomeExpense/TransactionSheet.jsx";
 import { Pencil } from "lucide-react";
 import "./MonthlyCalendar.css";
 
-function Dashboard({
-  search,
-  selectedDate,
-  handleDateSelect,
-  handleMonthChange,
-  setSelectedDate,
-}) {
+function Dashboard() {
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState({
+    year: 2024,
+    month: 1,
+    filterType: "main_category",
+    filterValue: "*",
+  });
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const handleDateSelect = (year, month) => {
+    setSearch({
+      ...search,
+      year,
+      month,
+    });
+
+    const formattedDate = `${year}-${month.toString().padStart(2, "0")}-01`;
+    setSelectedDate(formattedDate);
+  };
+
+  const handleMonthChange = (direction) => {
+    let newYear = search.year;
+    let newMonth = search.month + direction;
+
+    if (newMonth < 1) {
+      newMonth = 12;
+      newYear -= 1;
+    } else if (newMonth > 12) {
+      newMonth = 1;
+      newYear += 1;
+    }
+    setSearch({
+      ...search,
+      year: newYear,
+      month: newMonth,
+    });
+  };
 
   return (
     <>
