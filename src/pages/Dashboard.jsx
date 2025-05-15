@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ShowCalendar from "../components/Dashboard/ShowCalendar.jsx";
 import MonthlyHeader from "../components/MonthlyHeader.jsx";
 import MonthlySummary from "../components/Dashboard/MonthlySummary.jsx";
 import TransactionSheet from "@/components/IncomeExpense/TransactionSheet.jsx";
 import { Pencil } from "lucide-react";
 import "./MonthlyCalendar.css";
+import registerUser from "@/utils/registerUser.js";
 
 function Dashboard() {
+  useEffect(() => {
+    registerUser();
+  }, []);
+
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState({
     year: 2024,
