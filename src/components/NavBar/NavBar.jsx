@@ -3,6 +3,13 @@ import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/utils/useAuthStore";
 import { LogOut as LogOutIcon } from "lucide-react";
 import { Button } from "../ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import SimpleLogo from "./simplelogo";
 
 export default function NavBar() {
   const user = useAuthStore((state) => state.user);
@@ -14,20 +21,21 @@ export default function NavBar() {
     navigate("/");
   };
 
-  const baseTextCss = "text-gray-700 transition";
+  const baseTextCss = "transition font-bold";
   const activeTextCss = "text-brand font-semibold";
   const underCssBase =
-    "absolute left-0 bottom-0 h-0.5 bg-brand transition-all duration-300";
+    "absolute left-0 top-9 h-1 bg-brand transition-all duration-300";
 
   return (
-    <nav className="font-noto bg-white shadow-md w-full z-50 px-4">
-      <div className="flex items-center h-16">
+    <nav className="font-noto bg-white/50 backdrop-blur-sm fixed top-0 left-0 shadow-md w-full z-50 px-4">
+      <div className="flex flex-row justify-between mx-auto items-center w-4/5 h-16">
         <Link to="">
-          <div className="flex-shrink-0 text-xl font-bold text-brand mr-20">
-            FinLog
+          <div className="flex items-center text-3xl font-bold text-brand gap-0 ">
+            <SimpleLogo className="align-middle" />
+            <span className="font-logo ml-2">FinLog</span>
           </div>
         </Link>
-        <ul className="flex flex-row items-center gap-6">
+        <ul className="ml-10 flex flex-row items-center gap-6">
           <li>
             <NavLink to="dashboard" className="relative group">
               {({ isActive }) => (
@@ -112,18 +120,34 @@ export default function NavBar() {
             <div className="flex items-center gap-4">
               {/* 사용자 정보 표시 */}
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">
-                  {user.user_metadata?.name} 님 반갑습니다!
-                </span>
-                <img
-                  src={user.user_metadata?.avatar_url}
-                  alt="아바타"
-                  className="w-8 h-8 rounded-full border border-gray-300"
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Avatar>
+                      <AvatarImage src={user.user_metadata?.avatar_url} />
+                      <AvatarFallback>
+                        {user.user_metadata?.name}
+                      </AvatarFallback>
+                    </Avatar>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-50">
+                    <div className="grid gap-4">
+                      <div className="space-y-2">
+                        <h4 className="font-medium leading-none">
+                          {user.user_metadata.name}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          {user.user_metadata.email}
+                        </p>
+                      </div>
+                      <div className="grid gap-2">
+                        <Button variant="outline" onClick={handleLogout}>
+                          <LogOutIcon /> 로그아웃
+                        </Button>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
-              <Button variant="outline" size="icon" onClick={handleLogout}>
-                <LogOutIcon />
-              </Button>
             </div>
           </div>
         )}

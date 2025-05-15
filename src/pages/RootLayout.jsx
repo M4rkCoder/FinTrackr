@@ -32,7 +32,7 @@ export default function RootLayout() {
   return (
     <>
       <NavBar />
-      <main>
+      <main className="pt-20 px-4">
         <Outlet />
       </main>
     </>

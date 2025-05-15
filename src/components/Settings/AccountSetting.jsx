@@ -6,8 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useAuthStore } from "@/utils/useAuthStore.jsx";
 
 export default function AccountSetting() {
+  const user = useAuthStore((state) => state.user);
   return (
     <Card className="w-full">
       <CardHeader>
