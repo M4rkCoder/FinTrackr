@@ -8,7 +8,7 @@ import SaveInvestment from "./pages/SaveInvestment.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import { useAuthStore } from "./utils/useAuthStore.jsx";
 import { supabase } from "@/utils/supabase.js";
-import "./App.css";
+// import "./App.css";
 
 function App() {
   const setUser = useAuthStore((state) => state.setUser);
