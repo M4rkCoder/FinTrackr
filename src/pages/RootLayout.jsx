@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import NavBar from "@/components/NavBar/NavBar";
-import { useAuthStore } from "@/utils/useAuthStore.jsx";
+import { useAuthStore } from "@/utils/useAuthStore";
 import { supabase } from "@/utils/supabase.js";
 
 export default function RootLayout() {

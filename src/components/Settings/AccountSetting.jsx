@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useAuthStore } from "@/utils/useAuthStore.jsx";
+import { useAuthStore } from "@/utils/useAuthStore";
 
 export default function AccountSetting() {
   const user = useAuthStore((state) => state.user);
