@@ -31,8 +31,7 @@ export default function CategorySheet({ open, onClose, onSave, category }) {
           <SheetHeader>
             <SheetTitle className="text-2xl">카테고리 수정</SheetTitle>
             <SheetDescription>
-              {category?.types.type}・{category?.main_categories.main_category}
-              ・{subCategory}
+              {category?.type}・{category?.main_category}・{subCategory}
             </SheetDescription>
           </SheetHeader>
 

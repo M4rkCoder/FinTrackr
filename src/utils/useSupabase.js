@@ -11,7 +11,7 @@ export default function useSupabase(tableName) {
     select = "*",
     orderBy = null,
     table = tableName, // 기본값을 기존 tableName으로
-  }) {
+  } = {}) {
     setLoading(true);
     let query = supabase.from(table).select(select);
 
