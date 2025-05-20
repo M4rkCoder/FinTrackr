@@ -6,7 +6,7 @@ import Dashboard from "@/pages/Dashboard";
 import IncomeExpense from "@/pages/IncomeExpense";
 import SaveInvestment from "@/pages/SaveInvestment";
 import Settings from "@/pages/Settings";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import ProtectedRoute from "@/routes/ProtectedRoute";
 
 export const router = createBrowserRouter([
   {

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/utils/useAuthStore";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useAccountStore } from "@/stores/useAccountStore";
 import { LogOut as LogOutIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -10,10 +11,15 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import SimpleLogo from "./simplelogo";
+import registerUser from "@/utils/registerUser";
 
 export default function NavBar() {
+  useEffect(() => {
+    registerUser();
+  }, []);
   const user = useAuthStore((state) => state.user);
   const logOut = useAuthStore((state) => state.logout);
+  const account = useAccountStore((state) => state.account);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -132,6 +138,9 @@ export default function NavBar() {
                   <PopoverContent className="w-50">
                     <div className="grid gap-4">
                       <div className="space-y-2">
+                        <h4 className="font-medium leading-none">
+                          {account?.name}
+                        </h4>
                         <h4 className="font-medium leading-none">
                           {user.user_metadata.name}
                         </h4>

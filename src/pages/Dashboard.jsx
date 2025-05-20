@@ -5,13 +5,8 @@ import MonthlySummary from "../components/Dashboard/MonthlySummary.jsx";
 import TransactionSheet from "@/components/IncomeExpense/TransactionSheet.jsx";
 import { Pencil } from "lucide-react";
 import "./MonthlyCalendar.css";
-import registerUser from "@/utils/registerUser.js";
 
 function Dashboard() {
-  useEffect(() => {
-    registerUser();
-  }, []);
-
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState({
     year: 2024,

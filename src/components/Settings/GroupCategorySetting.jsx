@@ -19,42 +19,31 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import useSupabase from "@/utils/useSupabase.js";
 import CategorySheet from "./CategorySheet";
 
-export default function SubCategorySetting({ categories, loading, fetchData }) {
+export default function GroupCategorySetting({
+  categories,
+  loading,
+  fetchData,
+}) {
   const [selectedType, setSelectedType] = useState("지출");
-  const [selectedMainCategory, setSelectedMainCategory] = useState("전체");
+  const [selectedMainCategoryId, setSelectedMainCategoryId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
   const { update } = useSupabase("categories");
 
-  // 2) 타입이 바뀔 때 main_category 기본을 "전체"로 리셋
-  useEffect(() => {
-    setSelectedMainCategory("전체");
-  }, [selectedType]);
-
-  // 3) 해당 타입에 대한 고유 main_category 리스트 (맨 앞에 "전체")
-  const mainCategoryOptions = [
-    "전체",
-    ...Array.from(
-      new Set(
-        categories
-          .filter((item) => item.type === selectedType)
-          .map((item) => item.main_category)
-      )
-    ),
-  ];
-
-  // 4) sub_category 필터
-  const filteredSubCategories = categories.filter(
-    (item) =>
-      item.type === selectedType &&
-      (selectedMainCategory === "전체" ||
-        item.main_category === selectedMainCategory)
+  const mainCategoryOptions = Array.from(
+    new Map(
+      categories
+        .filter((item) => item.type === selectedType)
+        .map((item) => [
+          item.main_category_id,
+          { id: item.main_category_id, name: item.main_category },
+        ])
+    ).values()
   );
 
   const handleEdit = (category) => {
-    setSelectedCategory(category);
     setModalOpen(true);
-    fetchData();
+    //...update
+    //fetchData();
   };
   let error = null;
   const handleSave = async (updated) => {
@@ -78,8 +67,8 @@ export default function SubCategorySetting({ categories, loading, fetchData }) {
   return (
     <Card className="w-full my-6">
       <CardHeader>
-        <CardTitle className="text-2xl">카테고리 설정</CardTitle>
-        <CardDescription>카테고리를 편집합니다.</CardDescription>
+        <CardTitle className="text-2xl">카테고리 그룹 설정</CardTitle>
+        <CardDescription>카테고리 그룹을 편집합니다.</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6">
@@ -110,38 +99,18 @@ export default function SubCategorySetting({ categories, loading, fetchData }) {
           })}
         </ToggleGroup>
 
-        {/* ── 2. Main Category 버튼 리스트 ── */}
-        <div className="flex flex-wrap gap-2 justify-center">
-          {mainCategoryOptions.map((cat) => (
-            <Button
-              key={cat}
-              variant={selectedMainCategory === cat ? "default" : "outline"}
-              onClick={() => setSelectedMainCategory(cat)}
-              className="text-lg"
-            >
-              {cat}
-            </Button>
-          ))}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="opacity-50 hover:opacity-100 transition-colors"
-          >
-            <SquarePen />
-          </Button>
-        </div>
-
-        {/* ── 3. Sub Category 버튼 그리드 ── */}
+        {/* ── 2. Main Category 버튼 그리드 ── */}
         <div className="grid grid-cols-4 gap-4">
-          {filteredSubCategories.map((item) => (
+          {mainCategoryOptions.map((item) => (
             <Button
               key={item.id}
-              variant="outline"
-              onClick={() => handleEdit(item)}
+              variant={
+                selectedMainCategoryId === item.id ? "default" : "outline"
+              }
+              onClick={() => setSelectedMainCategoryId(item.id)}
               className="text-lg"
             >
-              <span>{item.emoji}</span>
-              <span>{item.sub_category}</span>
+              {item.name}
             </Button>
           ))}
           <Button variant="secondary">
@@ -153,7 +122,7 @@ export default function SubCategorySetting({ categories, loading, fetchData }) {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleSave}
-        category={selectedCategory}
+        category={selectedMainCategoryId}
         selectedType={selectedType}
         setSelectedType={setSelectedType}
       />

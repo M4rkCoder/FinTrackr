@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { supabase } from "@/utils/supabase.js";
-import { useAuthStore } from "@/utils/useAuthStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function AuthProvider({ children }) {
   const setUser = useAuthStore((state) => state.setUser);

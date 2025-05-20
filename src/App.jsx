@@ -6,7 +6,7 @@ import NavBar from "./components/NavBar/NavBar.jsx";
 import Settings from "./pages/Settings.jsx";
 import SaveInvestment from "./pages/SaveInvestment.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
-import { useAuthStore } from "./utils/useAuthStore.jsx";
+import { useAuthStore } from "./stores/useAuthStore.js";
 import { supabase } from "@/utils/supabase.js";
 // import "./App.css";
 

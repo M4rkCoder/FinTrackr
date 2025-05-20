@@ -1,19 +1,19 @@
 import { create } from "zustand";
 import { supabase } from "@/utils/supabase";
-import { useUserStore } from "./useUserStore";
 
-export const useAccountStore = create((set) => ({
+export const useAccountStore = create((set, get) => ({
   account: null,
   isLoading: false,
 
   fetchAccount: async (user) => {
     console.log("fetchAccount 시작");
+    const { isLoading, account } = get();
 
-    if (!user) {
-      console.log("user 없음, account 초기화 후 종료");
-      set({ account: null, isLoading: false });
+    if (!user || isLoading || account) {
+      console.log("로딩 중 또는 account 있음. fetchAccount 스킵");
       return;
     }
+
     set({ isLoading: true });
 
     try {

@@ -6,7 +6,8 @@ import {
   TabsTrigger,
 } from "@/components/ui/linetabs";
 import useSupabase from "@/utils/useSupabase.js";
-import SubCategorySetting from "./subCategorySetting";
+import SubCategorySetting from "./SubCategorySetting";
+import GroupCategorySetting from "./GroupCategorySetting";
 
 function CategorySetting() {
   const { data: categories, loading, fetchData } = useSupabase("category_view");
@@ -35,7 +36,13 @@ function CategorySetting() {
           fetchData={() => fetchData}
         />
       </TabsContent>
-      <TabsContent value="group"></TabsContent>
+      <TabsContent value="group">
+        <GroupCategorySetting
+          categories={categories}
+          loading={loading}
+          fetchData={() => fetchData}
+        />
+      </TabsContent>
     </Tabs>
   );
 }
