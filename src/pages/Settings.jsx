@@ -4,11 +4,17 @@ import { Separator } from "@/components/ui/separator";
 
 export default function Settings() {
   return (
-    <div className="w-4/5 max-w-4xl mx-auto p-5 flex flex-col gap-6">
-      <h2 className="text-3xl font-semibold tracking-tight text-left">설정</h2>
-      <Separator />
-      <AccountSetting />
-      <CategorySetting />
+    <div className="flex flex-col w-[80%] justify-between mx-auto mt-4">
+      <div className="flex flex-row justify-between">
+        <h2 className="text-3xl font-semibold tracking-tight pb-2 text-left">
+          설정
+        </h2>
+      </div>
+      <Separator className="my-4" />
+      <div className="gap-2">
+        <AccountSetting />
+        <CategorySetting />
+      </div>
     </div>
   );
 }

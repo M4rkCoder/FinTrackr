@@ -12,17 +12,29 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Smile } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { SmilePlus, ArrowDownCircle, ArrowUpCircle } from "lucide-react";
 
 export default function CategorySheet({ open, onClose, onSave, category }) {
+  const [selectedTypeId, setSelectedTypeId] = useState(
+    category?.type_id?.toString()
+  );
   const [subCategory, setSubCategory] = useState(category?.sub_category || "");
-  const [emoji, setEmoji] = useState(category?.emoji || "💡");
+  const [emoji, setEmoji] = useState(category?.emoji || "");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   useEffect(() => {
-    setSubCategory(category?.sub_category);
-    setEmoji(category?.emoji);
+    if (category) {
+      setSelectedTypeId(category?.type_id?.toString());
+      setSubCategory(category?.sub_category);
+      setEmoji(category?.emoji);
+    }
   }, [category]);
+
+  const types = [
+    { id: 1, name: "수입", icon: ArrowDownCircle },
+    { id: 2, name: "지출", icon: ArrowUpCircle },
+  ];
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
@@ -31,11 +43,32 @@ export default function CategorySheet({ open, onClose, onSave, category }) {
           <SheetHeader>
             <SheetTitle className="text-2xl">카테고리 수정</SheetTitle>
             <SheetDescription>
-              {category?.type}・{category?.main_category}・{subCategory}
+              {/* {types[selectedTypeId - 1].name}・{subCategory} */}
             </SheetDescription>
           </SheetHeader>
 
           <div className="space-y-4 mt-6">
+            <ToggleGroup
+              type="single"
+              value={selectedTypeId}
+              onValueChange={(v) => v && setSelectedTypeId(v)}
+              className="grid grid-cols-2 gap-3 w-full max-w-[400px] mx-auto"
+            >
+              {types.map((type) => {
+                const Icon = type.icon;
+                return (
+                  <ToggleGroupItem
+                    key={type.id}
+                    value={String(type.id)}
+                    className="flex flex-col items-center justify-center gap-2 px-2 py-2 rounded min-h-[80px] text-lg border border-gray-300"
+                  >
+                    <Icon className="!w-7 !h-7 shrink-0" />
+                    {/* 아이콘 컴포넌트를 직접 렌더링 */}
+                    <span className="text-base font-semibold">{type.name}</span>
+                  </ToggleGroupItem>
+                );
+              })}
+            </ToggleGroup>
             <Label htmlFor="category" className="text-lg font-semibold">
               카테고리 이름
             </Label>
@@ -53,7 +86,7 @@ export default function CategorySheet({ open, onClose, onSave, category }) {
               className="border rounded-lg p-4 flex flex-col justify-center items-center cursor-pointer text-4xl select-none hover:bg-gray-100"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
             >
-              {emoji || <Smile size={41} />}
+              {emoji || <SmilePlus size={41} color="gray" />}
               <span className="text-sm text-muted-foreground ml-2 mt-2">
                 변경하려면 클릭!
               </span>
@@ -76,6 +109,7 @@ export default function CategorySheet({ open, onClose, onSave, category }) {
             <Button
               onClick={() =>
                 onSave({
+                  type_id: parseInt(selectedTypeId, 10),
                   id: category.id,
                   emoji,
                   sub_category: subCategory,
@@ -84,7 +118,7 @@ export default function CategorySheet({ open, onClose, onSave, category }) {
             >
               저장
             </Button>
-            <Button variant="secondary">삭제</Button>
+            <Button variant="destructive">삭제</Button>
           </SheetFooter>
         </div>
       </SheetContent>

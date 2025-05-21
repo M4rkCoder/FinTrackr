@@ -38,6 +38,8 @@ import { supabase } from "@/utils/supabase.js";
 import useSupabase from "@/utils/useSupabase.js";
 import { DateInput } from "../ui/date-input";
 import { format } from "date-fns";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useAccountStore } from "@/stores/useAccountStore";
 
 const formSchema = z
   .object({
@@ -74,6 +76,8 @@ export default function TransactionSheet({
   const { data: categories, fetchData } = useSupabase("categories");
   const [showCategoryList, setShowCategoryList] = useState(false);
   const [selectedType, setSelectedType] = useState("지출");
+  const user = useAuthStore((state) => state.user);
+  const account = useAccountStore((state) => state.account);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -111,6 +115,8 @@ export default function TransactionSheet({
 
   const onSubmit = async (data) => {
     const payload = {
+      user_id: user.id,
+      account_id: account.id,
       date: format(data.date, "yyyy-MM-dd"),
       category_id: data.category.id,
       amount: Number(data.amount.replace(/,/g, "")),

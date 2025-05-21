@@ -42,7 +42,6 @@ export default function AuthProvider({ children }) {
         }
       }
     );
-
     return () => {
       listener.subscription.unsubscribe();
     };
