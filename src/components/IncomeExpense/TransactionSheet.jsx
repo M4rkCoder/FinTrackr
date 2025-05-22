@@ -38,6 +38,7 @@ import { supabase } from "@/utils/supabase.js";
 import useSupabase from "@/utils/useSupabase.js";
 import { DateInput } from "../ui/date-input";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useAccountStore } from "@/stores/useAccountStore";
 
@@ -75,7 +76,7 @@ export default function TransactionSheet({
   const [formattedAmount, setFormattedAmount] = useState("");
   const { data: categories, fetchData } = useSupabase("categories");
   const [showCategoryList, setShowCategoryList] = useState(false);
-  const [selectedType, setSelectedType] = useState("지출");
+  const [selectedType, setSelectedType] = useState(2);
   const user = useAuthStore((state) => state.user);
   const account = useAccountStore((state) => state.account);
 
@@ -112,6 +113,10 @@ export default function TransactionSheet({
       setFormattedAmount("");
     }
   }, [open]);
+
+  useEffect(() => {
+    form.setValue("category", defaultValues.category);
+  }, [selectedType]);
 
   const onSubmit = async (data) => {
     const payload = {
@@ -174,24 +179,32 @@ export default function TransactionSheet({
               <ToggleGroup
                 type="single"
                 value={selectedType}
+                variant="black"
                 onValueChange={(v) => v && setSelectedType(v)}
-                className="grid grid-cols-3 gap-3 w-full max-w-[400px] mx-auto"
+                className="flex flex-row gap-5 w-4/5 max-w-[400px] mx-auto"
               >
                 {[
-                  { id: "지출", icon: ArrowDownCircle },
-                  { id: "수입", icon: ArrowUpCircle },
-                  { id: "저축&투자", icon: ChartNoAxesCombined },
-                ].map((type) => {
+                  { id: 1, name: "수입", icon: ArrowUpCircle },
+                  { id: 2, name: "지출", icon: ArrowDownCircle },
+                ].map((type, index, array) => {
                   const Icon = type.icon;
+                  const isFirst = index === 0;
+                  const isLast = index === array.length - 1;
                   return (
                     <ToggleGroupItem
                       key={type.id}
                       value={type.id}
-                      className="flex flex-col items-center justify-center gap-2 px-2 py-2 rounded min-h-[80px] text-lg border border-gray-300"
+                      className={cn(
+                        "flex flex-col items-center justify-center gap-2 px-2 py-2 min-h-[80px] text-lg border border-gray-300",
+                        isFirst && "rounded-r-md",
+                        isLast && "rounded-l-md"
+                      )}
                     >
                       <Icon className="!w-7 !h-7 shrink-0" />
                       {/* 아이콘 컴포넌트를 직접 렌더링 */}
-                      <span className="text-base font-semibold">{type.id}</span>
+                      <span className="text-base font-semibold">
+                        {type.name}
+                      </span>
                     </ToggleGroupItem>
                   );
                 })}
@@ -210,7 +223,11 @@ export default function TransactionSheet({
                         <Button
                           type="button"
                           variant="outline"
-                          className="w-full justify-start"
+                          className={cn(
+                            "w-full justify-center text-lg",
+                            !field.value?.sub_category &&
+                              "text-sm text-muted-foreground/80"
+                          )}
                           onClick={() => setShowCategoryList((prev) => !prev)}
                         >
                           {field.value?.sub_category
@@ -232,27 +249,31 @@ export default function TransactionSheet({
                                 <CommandEmpty>
                                   해당 카테고리가 없습니다.
                                 </CommandEmpty>
-                                {categories.map((cat) => (
-                                  <CommandItem
-                                    key={cat.id}
-                                    onSelect={() => {
-                                      field.onChange({
-                                        sub_category: cat.sub_category,
-                                        id: cat.id,
-                                      });
-                                      setShowCategoryList(false);
-                                    }}
-                                    className="flex flex-col items-start px-3 py-2 hover:bg-muted cursor-pointer"
-                                  >
-                                    <span className="font-medium">
-                                      {cat.emoji || ""} {cat.sub_category}
-                                    </span>
-                                    <span className="text-xs text-muted-foreground">
-                                      {cat.types?.type}・
-                                      {cat.main_categories?.main_category}
-                                    </span>
-                                  </CommandItem>
-                                ))}
+                                {categories
+                                  .filter(
+                                    (cat) => cat.types?.id === selectedType
+                                  )
+                                  .map((cat) => (
+                                    <CommandItem
+                                      key={cat.id}
+                                      onSelect={() => {
+                                        field.onChange({
+                                          sub_category: cat.sub_category,
+                                          id: cat.id,
+                                        });
+                                        setShowCategoryList(false);
+                                      }}
+                                      className="flex flex-col items-start px-3 py-2 hover:bg-muted cursor-pointer"
+                                    >
+                                      <span className="font-medium">
+                                        {cat.emoji || ""} {cat.sub_category}
+                                      </span>
+                                      <span className="text-xs text-muted-foreground">
+                                        {cat.types?.type}・
+                                        {cat.main_categories?.main_category}
+                                      </span>
+                                    </CommandItem>
+                                  ))}
                               </CommandList>
                             </Command>
                           </div>

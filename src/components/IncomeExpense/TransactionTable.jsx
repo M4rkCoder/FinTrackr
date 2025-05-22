@@ -17,8 +17,9 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DateInput } from "../ui/date-input";
-import { Trash2, Pencil } from "lucide-react";
+import { Badge } from "../ui/badge";
+import { Trash2, Pencil, SmilePlus } from "lucide-react";
+import clsx from "clsx";
 
 export default function TransactionTable({
   data,
@@ -36,7 +37,6 @@ export default function TransactionTable({
     return data.filter((row) => {
       return (
         row.description?.toLowerCase().includes(lowerFilter) ||
-        row.main_category?.toLowerCase().includes(lowerFilter) ||
         row.sub_category?.toLowerCase().includes(lowerFilter)
       );
     });
@@ -108,7 +108,7 @@ export default function TransactionTable({
             />
           </div>
         ),
-        size: 50,
+        size: 10,
       },
       {
         accessorKey: "date",
@@ -117,10 +117,12 @@ export default function TransactionTable({
           const date = new Date(info.getValue());
           return (
             <span className="text-sm">
-              {date.getMonth() + 1}. {date.getDate()}.
+              {date.toLocaleDateString("ko-KR")}
+              {/* {date.getMonth() + 1}. {date.getDate()}. */}
             </span>
           );
         },
+        size: 80,
       },
       {
         accessorKey: "type",
@@ -129,25 +131,27 @@ export default function TransactionTable({
           const type = info.getValue();
           const isIncome = type === "수입";
           return (
-            <span
-              className={`px-2 py-1 rounded-md text-sm font-medium ${
-                isIncome
-                  ? "bg-green-100 text-green-600"
-                  : "bg-red-100 text-red-600"
-              }`}
-            >
-              {type}
-            </span>
+            <Badge variant={isIncome ? "income" : "expense"}>{type}</Badge>
           );
         },
-      },
-      {
-        accessorKey: "main_category",
-        header: "대분류",
+        size: 80,
       },
       {
         accessorKey: "sub_category",
-        header: "소분류",
+        header: "카테고리",
+        cell: ({ row }) => {
+          const emoji = row.original.emoji || (
+            <SmilePlus size={18} color="gray" />
+          );
+          const category = row.original.sub_category || "없음";
+          return (
+            <span className="flex items-center gap-1">
+              <span>{emoji}</span>
+              <span>{category}</span>
+            </span>
+          );
+        },
+        size: 120,
       },
       {
         accessorKey: "amount",
@@ -157,10 +161,17 @@ export default function TransactionTable({
             {info.getValue().toLocaleString()}
           </span>
         ),
+        size: 120,
       },
       {
         accessorKey: "description",
         header: "내역",
+        size: 150,
+        cell: (info) => (
+          <span className="block truncate max-w-[150px]">
+            {info.getValue()}
+          </span>
+        ),
       },
       {
         accessorKey: "remarks",
@@ -174,6 +185,7 @@ export default function TransactionTable({
             </span>
           ) : null;
         },
+        size: 50,
       },
     ],
     [selectedRowIds, isAllSelected, isSomeSelected]
@@ -196,7 +208,7 @@ export default function TransactionTable({
       {/* 🔍 필터 인풋 */}
       <div className="w-[80%] flex justify-between gap-2">
         <Input
-          placeholder="내역, 대분류, 소분류 검색..."
+          placeholder="내역, 카테고리 검색..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           className="w-[60%]"
@@ -222,12 +234,24 @@ export default function TransactionTable({
 
       {/* 📋 테이블 */}
       <div className="w-[80%] rounded-md border">
-        <Table>
+        <Table className="table-fixed w-full">
           <TableHeader className="bg-gray-100">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="font-semibold">
+                  <TableHead
+                    key={header.id}
+                    className={clsx(
+                      "font-semibold",
+                      header.column.id === "select" && "w-[40px]",
+                      header.column.id === "date" && "w-[100px]",
+                      header.column.id === "type" && "w-[80px]",
+                      header.column.id === "sub_category" && "w-[120px]",
+                      header.column.id === "amount" && "w-[100px]",
+                      header.column.id === "description" && "w-[200px]",
+                      header.column.id === "remarks" && "w-[60px]"
+                    )}
+                  >
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext()
@@ -247,7 +271,18 @@ export default function TransactionTable({
                 className="cursor-pointer hover:bg-zinc-100"
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell
+                    key={cell.id}
+                    className={clsx(
+                      cell.column.id === "select" && "w-[40px]",
+                      cell.column.id === "date" && "w-[100px]",
+                      cell.column.id === "type" && "w-[80px]",
+                      cell.column.id === "sub_category" && "w-[120px]",
+                      cell.column.id === "amount" && "w-[100px]",
+                      cell.column.id === "description" && "w-[200px]",
+                      cell.column.id === "remarks" && "w-[60px]"
+                    )}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

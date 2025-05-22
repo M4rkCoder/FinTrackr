@@ -17,9 +17,9 @@ import useSupabase from "@/utils/useSupabase.js";
 import SubCategorySetting from "./SubCategorySetting";
 
 function CategorySetting() {
-  const { data: categories, loading, fetchData } = useSupabase("category_view");
+  const { data: categories, loading, fetchData } = useSupabase("categories");
   // const { update } = useSupabase("categories");
-  const [selectedTab, setSelectedTab] = useState("income");
+  const [selectedTab, setSelectedTab] = useState("1");
 
   // 1) supabase에서 카테고리 전체 데이터 로드
   useEffect(() => {
@@ -41,14 +41,14 @@ function CategorySetting() {
           className="w-full"
         >
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="income" className="text-lg font-extrabold">
+            <TabsTrigger value="1" className="text-lg font-extrabold">
               수입
             </TabsTrigger>
-            <TabsTrigger value="expense" className="text-lg font-extrabold">
+            <TabsTrigger value="2" className="text-lg font-extrabold">
               지출
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="income">
+          <TabsContent value="1">
             <SubCategorySetting
               categories={categories}
               typeId={1}
@@ -56,7 +56,7 @@ function CategorySetting() {
               fetchData={fetchData}
             />
           </TabsContent>
-          <TabsContent value="expense">
+          <TabsContent value="2">
             <SubCategorySetting
               categories={categories}
               typeId={2}

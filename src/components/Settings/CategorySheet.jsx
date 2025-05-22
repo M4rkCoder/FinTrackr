@@ -15,9 +15,16 @@ import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { SmilePlus, ArrowDownCircle, ArrowUpCircle } from "lucide-react";
 
-export default function CategorySheet({ open, onClose, onSave, category }) {
+export default function CategorySheet({
+  open,
+  onClose,
+  onSave,
+  category = null,
+  selectedType,
+  handleRemove,
+}) {
   const [selectedTypeId, setSelectedTypeId] = useState(
-    category?.type_id?.toString()
+    category?.type_id?.toString() || selectedType.toString()
   );
   const [subCategory, setSubCategory] = useState(category?.sub_category || "");
   const [emoji, setEmoji] = useState(category?.emoji || "");
@@ -32,8 +39,8 @@ export default function CategorySheet({ open, onClose, onSave, category }) {
   }, [category]);
 
   const types = [
-    { id: 1, name: "수입", icon: ArrowDownCircle },
-    { id: 2, name: "지출", icon: ArrowUpCircle },
+    { id: 1, name: "수입", icon: ArrowUpCircle },
+    { id: 2, name: "지출", icon: ArrowDownCircle },
   ];
 
   return (
@@ -41,7 +48,9 @@ export default function CategorySheet({ open, onClose, onSave, category }) {
       <SheetContent className="max-w-md">
         <div className="h-full overflow-y-auto p-4">
           <SheetHeader>
-            <SheetTitle className="text-2xl">카테고리 수정</SheetTitle>
+            <SheetTitle className="text-2xl">
+              카테고리 {category ? "수정" : "입력"}
+            </SheetTitle>
             <SheetDescription>
               {/* {types[selectedTypeId - 1].name}・{subCategory} */}
             </SheetDescription>
@@ -76,7 +85,11 @@ export default function CategorySheet({ open, onClose, onSave, category }) {
               value={subCategory}
               onChange={(e) => setSubCategory(e.target.value)}
               id="category"
-              placeholder="수정할 이름을 입력하세요"
+              placeholder={
+                category
+                  ? "수정할 이름을 입력하세요"
+                  : "카테고리 이름을 입력하세요"
+              }
               className="!text-lg text-center mb-4"
             />
           </div>
@@ -88,7 +101,7 @@ export default function CategorySheet({ open, onClose, onSave, category }) {
             >
               {emoji || <SmilePlus size={41} color="gray" />}
               <span className="text-sm text-muted-foreground ml-2 mt-2">
-                변경하려면 클릭!
+                {category ? "변경하려면 클릭!" : "입력하려면 클릭!"}
               </span>
             </div>
             {showEmojiPicker && (
@@ -109,8 +122,8 @@ export default function CategorySheet({ open, onClose, onSave, category }) {
             <Button
               onClick={() =>
                 onSave({
+                  id: category ? category.id : undefined,
                   type_id: parseInt(selectedTypeId, 10),
-                  id: category.id,
                   emoji,
                   sub_category: subCategory,
                 })
@@ -118,7 +131,14 @@ export default function CategorySheet({ open, onClose, onSave, category }) {
             >
               저장
             </Button>
-            <Button variant="destructive">삭제</Button>
+            {category && (
+              <Button
+                variant="destructive"
+                onClick={() => handleRemove(category.id)}
+              >
+                삭제
+              </Button>
+            )}
           </SheetFooter>
         </div>
       </SheetContent>

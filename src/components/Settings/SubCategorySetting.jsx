@@ -20,7 +20,7 @@ export default function SubCategorySetting({
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const { update } = useSupabase("categories");
+  const { create, update, remove } = useSupabase("categories");
 
   // type별 category 필터
   const filteredCategories = categories.filter(
@@ -32,10 +32,13 @@ export default function SubCategorySetting({
     setModalOpen(true);
   };
   let error = null;
-  const handleSave = async (updated) => {
-    if (updated) {
-      const id = updated.id;
-      const res = await update(updated.id, updated);
+  const handleSave = async (payload) => {
+    if (payload.id) {
+      const id = payload.id;
+      const res = await update(payload.id, payload);
+      error = res?.error;
+    } else {
+      const res = await create(payload);
       error = res?.error;
     }
 
@@ -44,11 +47,28 @@ export default function SubCategorySetting({
       alert("입력 오류");
       return;
     }
-
+    const alertMsg = payload.id ? "수정 완료" : "입력 완료";
     fetchData();
-    alert("수정 완료");
+    alert(alertMsg);
     setModalOpen(false);
   };
+
+  const handleRemove = async (id) => {
+    if (id) {
+      const res = await remove(id);
+      error = res?.error;
+    }
+
+    if (error) {
+      console.error("삭제 실패", error);
+      alert("삭제 오류");
+      return;
+    }
+    fetchData();
+    alert("삭제 완료");
+    setModalOpen(false);
+  };
+
   if (loading) return <p>로딩 중...</p>;
   return (
     <>
@@ -72,17 +92,25 @@ export default function SubCategorySetting({
             <span className="text-lg">{item.sub_category}</span>
           </Button>
         ))}
-        <Button variant="secondary" className="text-lg flex flex-col p-12">
+        <Button
+          variant="secondary"
+          className="text-lg flex flex-col p-12"
+          onClick={setModalOpen}
+        >
           <CirclePlus size={50} className="scale-[2.3] my-2" />
           <span className="text-lg">추가</span>
         </Button>
       </div>
       <CategorySheet
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={() => {
+          setSelectedCategory(null);
+          setModalOpen(false);
+        }}
         onSave={handleSave}
         category={selectedCategory}
         selectedType={typeId}
+        handleRemove={handleRemove}
       />
     </>
   );
