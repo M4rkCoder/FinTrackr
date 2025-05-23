@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import TransactionTable from "../components/IncomeExpense/TransactionTable.jsx";
 import TransactionSheet from "@/components/IncomeExpense/TransactionSheet.jsx";
 import useSupabase from "@/utils/useSupabase.js";
+import { useSupabaseQuery } from "@/utils/useSupabaseQuery.js";
+import { useSupabaseMutation } from "@/utils/useSupabaseMutation.js";
 import { DateRangePicker } from "@/components/ui/date-range-picker.jsx";
 import { differenceInDays, format } from "date-fns";
 import { Separator } from "@/components/ui/separator.jsx";
@@ -13,21 +15,22 @@ function IncomeExpense() {
     from: "2024-01-01",
     to: "2024-02-01",
   });
-  const { data, loading, error, fetchData } = useSupabase(
-    "monthly_transaction"
-  );
-  const { remove, update } = useSupabase("transactions");
+  const { data, isLoading, isError, error, refetch } = useSupabaseQuery({
+    table: "monthly_transaction",
+    filters: {
+      dateRange: { from: dateRange.from, to: dateRange.to },
+    },
+  });
+  const { create, remove, update } = useSupabaseMutation("transactions", [
+    ["supabase", "transactions", dateRange],
+  ]);
 
   const handleRemove = async (ids) => {
-    const { data, error } = await remove(ids);
+    const { data, error } = await remove.mutateAsync(ids);
 
     if (!error) {
       alert("기록 삭제 완료");
-      await fetchData({
-        filters: {
-          dateRange: { from: dateRange.from, to: dateRange.to },
-        },
-      });
+      refetch();
     }
     return { data, error };
   };
@@ -45,14 +48,10 @@ function IncomeExpense() {
   };
 
   useEffect(() => {
-    fetchData({
-      filters: {
-        dateRange: { from: dateRange.from, to: dateRange.to },
-      },
-    });
+    refetch();
   }, [dateRange]);
-  if (loading) return <p>⏳ 로딩 중...</p>;
-  if (error) return <p>❌ 오류 발생: {error}</p>;
+  if (isLoading) return <p>⏳ 로딩 중...</p>;
+  if (isError) return <p>❌ 오류 발생: {error.message}</p>;
   return (
     <section>
       <div className="flex flex-col w-[80%] justify-between mx-auto mt-4">
@@ -96,15 +95,13 @@ function IncomeExpense() {
         open={open}
         onOpenChange={handleModalOpenChange}
         onAddOrUpdate={async () => {
-          await fetchData({
-            filters: {
-              month: `${year}-${month.toString().padStart(2, "0")}-01`,
-            },
-          });
+          await refetch();
           setEditRow(null);
         }}
         editRow={editRow}
         update={update}
+        create={create}
+        onRemove={handleRemove}
       />
     </section>
   );

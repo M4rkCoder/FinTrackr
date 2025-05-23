@@ -17,7 +17,6 @@ const toggleVariants = cva(
         black:
           "border border-black text-black hover:bg-black hover:text-white data-[state=on]:bg-black data-[state=on]:text-white",
       },
-      size: {},
       size: {
         default: "h-9 px-2 min-w-9",
         sm: "h-8 px-1.5 min-w-8",

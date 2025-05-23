@@ -13,20 +13,27 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import useSupabase from "@/utils/useSupabase.js";
 import SubCategorySetting from "./SubCategorySetting";
+import { useSupabaseQuery } from "@/utils/useSupabaseQuery";
 
 function CategorySetting() {
-  const { data: categories, loading, fetchData } = useSupabase("categories");
+  const {
+    data: categories,
+    isLoading,
+    refetch,
+  } = useSupabaseQuery({
+    table: "categories",
+  });
+  // const { data: categories, loading, fetchData } = useSupabase("categories");
   // const { update } = useSupabase("categories");
   const [selectedTab, setSelectedTab] = useState("1");
 
   // 1) supabase에서 카테고리 전체 데이터 로드
   useEffect(() => {
-    fetchData();
+    refetch();
   }, []);
 
-  if (loading) return <p>로딩 중...</p>;
+  if (isLoading) return <p>로딩 중...</p>;
   return (
     <Card className="w-full my-6">
       <CardHeader>
@@ -52,16 +59,16 @@ function CategorySetting() {
             <SubCategorySetting
               categories={categories}
               typeId={1}
-              loading={loading}
-              fetchData={fetchData}
+              loading={isLoading}
+              fetchData={refetch}
             />
           </TabsContent>
           <TabsContent value="2">
             <SubCategorySetting
               categories={categories}
               typeId={2}
-              loading={loading}
-              fetchData={fetchData}
+              loading={isLoading}
+              fetchData={refetch}
             />
           </TabsContent>
         </Tabs>

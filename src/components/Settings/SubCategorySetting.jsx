@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CirclePlus, SmilePlus } from "lucide-react";
-import useSupabase from "@/utils/useSupabase.js";
+import { useSupabaseMutation } from "@/utils/useSupabaseMutation";
 import CategorySheet from "./CategorySheet";
 
 export default function SubCategorySetting({
@@ -20,7 +20,11 @@ export default function SubCategorySetting({
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const { create, update, remove } = useSupabase("categories");
+  const { create, update, remove } = useSupabaseMutation("categories", [
+    "supabase",
+    "categories",
+    typeId,
+  ]);
 
   // type별 category 필터
   const filteredCategories = categories.filter(
@@ -34,11 +38,13 @@ export default function SubCategorySetting({
   let error = null;
   const handleSave = async (payload) => {
     if (payload.id) {
-      const id = payload.id;
-      const res = await update(payload.id, payload);
+      const res = await update.mutateAsync({
+        id: payload.id,
+        updates: payload,
+      });
       error = res?.error;
     } else {
-      const res = await create(payload);
+      const res = await create.mutateAsync(payload);
       error = res?.error;
     }
 
@@ -55,7 +61,7 @@ export default function SubCategorySetting({
 
   const handleRemove = async (id) => {
     if (id) {
-      const res = await remove(id);
+      const res = await remove.mutateAsync(id);
       error = res?.error;
     }
 

@@ -31,16 +31,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { supabase } from "@/utils/supabase.js";
-import useSupabase from "@/utils/useSupabase.js";
 import { DateInput } from "../ui/date-input";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useAccountStore } from "@/stores/useAccountStore";
+import { useSupabaseQuery } from "@/utils/useSupabaseQuery";
 
 const formSchema = z
   .object({
@@ -72,9 +71,13 @@ export default function TransactionSheet({
   editRow = null,
   onAddOrUpdate,
   update,
+  create,
+  onRemove,
 }) {
   const [formattedAmount, setFormattedAmount] = useState("");
-  const { data: categories, fetchData } = useSupabase("categories");
+  const { data: categories } = useSupabaseQuery({
+    table: "categories",
+  });
   const [showCategoryList, setShowCategoryList] = useState(false);
   const [selectedType, setSelectedType] = useState(2);
   const user = useAuthStore((state) => state.user);
@@ -85,11 +88,9 @@ export default function TransactionSheet({
     defaultValues,
   });
 
-  useEffect(() => {
-    fetchData({
-      select: `id, sub_category, emoji, main_categories(id, main_category), types(id, type)`,
-    });
-  }, []);
+  //  useEffect(() => {
+  //    fetchData();
+  //  }, []);
 
   useEffect(() => {
     if (open && editRow) {
@@ -133,10 +134,10 @@ export default function TransactionSheet({
 
     if (editRow) {
       const id = editRow.id;
-      const res = await update(id, payload);
+      const res = await update.mutateAsync({ id, updates: payload });
       error = res?.error;
     } else {
-      const res = await supabase.from("transactions").insert([payload]);
+      const res = await create.mutateAsync(payload);
       error = res?.error;
     }
 
@@ -156,7 +157,7 @@ export default function TransactionSheet({
   //   setFormattedAmount("");
   //   onOpenChange(false);
   // };
-
+  // console.log(categories);
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
@@ -250,9 +251,7 @@ export default function TransactionSheet({
                                   해당 카테고리가 없습니다.
                                 </CommandEmpty>
                                 {categories
-                                  .filter(
-                                    (cat) => cat.types?.id === selectedType
-                                  )
+                                  .filter((cat) => cat.type_id === selectedType)
                                   .map((cat) => (
                                     <CommandItem
                                       key={cat.id}
@@ -268,10 +267,9 @@ export default function TransactionSheet({
                                       <span className="font-medium">
                                         {cat.emoji || ""} {cat.sub_category}
                                       </span>
-                                      <span className="text-xs text-muted-foreground">
-                                        {cat.types?.type}・
-                                        {cat.main_categories?.main_category}
-                                      </span>
+                                      {/* <span className="text-xs text-muted-foreground">
+                                        {cat.type_id}
+                                      </span> */}
                                     </CommandItem>
                                   ))}
                               </CommandList>
@@ -362,11 +360,23 @@ export default function TransactionSheet({
                 )}
               />
 
-              <Button type="submit" className="w-full mb-5">
+              <Button type="submit" className="w-full mb-2">
                 {editRow ? "수정하기" : "저장하기"}
               </Button>
             </form>
           </Form>
+          {editRow && (
+            <Button
+              variant="destructive"
+              onClick={() => {
+                onRemove(editRow.id);
+                onOpenChange(false);
+              }}
+              className="w-full mb-5"
+            >
+              삭제하기
+            </Button>
+          )}
         </div>
       </SheetContent>
     </Sheet>
