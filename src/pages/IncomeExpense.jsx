@@ -20,6 +20,7 @@ function IncomeExpense() {
     filters: {
       dateRange: { from: dateRange.from, to: dateRange.to },
     },
+    orderBy: { column: "date", ascending: true },
   });
   const { create, remove, update } = useSupabaseMutation("transactions", [
     ["supabase", "transactions", dateRange],

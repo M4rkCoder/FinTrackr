@@ -152,12 +152,6 @@ export default function TransactionSheet({
     onOpenChange(false);
   };
 
-  // const handleClose = () => {
-  //   form.reset(defaultValues);
-  //   setFormattedAmount("");
-  //   onOpenChange(false);
-  // };
-  // console.log(categories);
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>

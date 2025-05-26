@@ -4,6 +4,9 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   flexRender,
+  getFilteredRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
 } from "@tanstack/react-table";
 
 import {
@@ -20,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "../ui/badge";
 import { Trash2, Pencil, SmilePlus } from "lucide-react";
 import clsx from "clsx";
+import { DataTableFacetedFilter } from "./TableFilter";
 
 export default function TransactionTable({
   data,
@@ -41,6 +45,22 @@ export default function TransactionTable({
       );
     });
   }, [data, filter]);
+
+  const categoryOptions = useMemo(() => {
+    const map = new Map();
+    data.forEach((item) => {
+      if (item.sub_category) {
+        if (!map.has(item.sub_category)) {
+          map.set(item.sub_category, {
+            label: `${item.emoji} ${item.sub_category}`,
+            value: item.sub_category,
+          });
+        }
+      }
+    });
+    return Array.from(map.values());
+  }, [data]);
+  // console.log("카테고리옵션:", categoryOptions);
 
   const toggleSelectRow = (id) => {
     setSelectedRowIds((prev) => {
@@ -83,6 +103,30 @@ export default function TransactionTable({
     }
   };
 
+  const renderedCategoryFilter = ({ column }) => (
+    <DataTableFacetedFilter
+      column={column}
+      title="카테고리"
+      options={categoryOptions}
+    />
+  );
+
+  const renderedTypeFilter = ({ column }) => (
+    <DataTableFacetedFilter
+      column={column}
+      title="분류"
+      options={[
+        {
+          value: "수입",
+          label: <Badge variant="income">수입</Badge>,
+        },
+        {
+          value: "지출",
+          label: <Badge variant="expense">지출</Badge>,
+        },
+      ]}
+    />
+  );
   const columns = useMemo(
     () => [
       {
@@ -127,6 +171,10 @@ export default function TransactionTable({
       {
         accessorKey: "type",
         header: "분류",
+        filterFn: "arrIncludes",
+        meta: {
+          filterComponent: renderedTypeFilter,
+        },
         cell: (info) => {
           const type = info.getValue();
           const isIncome = type === "수입";
@@ -137,8 +185,14 @@ export default function TransactionTable({
         size: 80,
       },
       {
-        accessorKey: "sub_category",
+        id: "category",
+        accessorFn: (row) => row.sub_category,
         header: "카테고리",
+        enableColumnFilter: true,
+        filterFn: "arrIncludes",
+        meta: {
+          filterComponent: renderedCategoryFilter,
+        },
         cell: ({ row }) => {
           const emoji = row.original.emoji || (
             <SmilePlus size={18} color="gray" />
@@ -188,14 +242,26 @@ export default function TransactionTable({
         size: 50,
       },
     ],
-    [selectedRowIds, isAllSelected, isSomeSelected]
+    [selectedRowIds]
   );
 
   const table = useReactTable({
     data: filteredData,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     getPaginationRowModel: getPaginationRowModel(),
+    enableColumnFilters: true,
+    filterFns: {
+      arrIncludes: (row, columnId, filterValue) => {
+        const value = row.original[columnId];
+        return Array.isArray(filterValue)
+          ? filterValue.includes(value)
+          : value === filterValue;
+      },
+    },
     initialState: {
       pagination: {
         pageSize: 15,
@@ -207,6 +273,15 @@ export default function TransactionTable({
     <div className="flex flex-col items-center mt-6 space-y-4 w-full">
       {/* 🔍 필터 인풋 */}
       <div className="w-[80%] flex justify-between gap-2">
+        {table
+          .getAllColumns()
+          .filter(
+            (col) => typeof col.columnDef.meta?.filterComponent === "function"
+          )
+          .map((col) => {
+            const FilterComponent = col.columnDef.meta?.filterComponent;
+            return <FilterComponent key={col.id} column={col} />;
+          })}
         <Input
           placeholder="내역, 카테고리 검색..."
           value={filter}
@@ -246,7 +321,7 @@ export default function TransactionTable({
                       header.column.id === "select" && "w-[40px]",
                       header.column.id === "date" && "w-[100px]",
                       header.column.id === "type" && "w-[80px]",
-                      header.column.id === "sub_category" && "w-[120px]",
+                      header.column.id === "category" && "w-[120px]",
                       header.column.id === "amount" && "w-[100px]",
                       header.column.id === "description" && "w-[200px]",
                       header.column.id === "remarks" && "w-[60px]"
@@ -277,7 +352,7 @@ export default function TransactionTable({
                       cell.column.id === "select" && "w-[40px]",
                       cell.column.id === "date" && "w-[100px]",
                       cell.column.id === "type" && "w-[80px]",
-                      cell.column.id === "sub_category" && "w-[120px]",
+                      cell.column.id === "category" && "w-[120px]",
                       cell.column.id === "amount" && "w-[100px]",
                       cell.column.id === "description" && "w-[200px]",
                       cell.column.id === "remarks" && "w-[60px]"
