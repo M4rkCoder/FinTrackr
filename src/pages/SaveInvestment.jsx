@@ -1,3 +1,4 @@
+import AssetBalanceTable from "@/components/SaveInvestment/AssetBalanceTable";
 import { Separator } from "@/components/ui/separator";
 
 export default function SaveInvestment() {
@@ -9,6 +10,7 @@ export default function SaveInvestment() {
         </h2>
       </div>
       <Separator className="mt-4" />
+      <AssetBalanceTable />
     </div>
   );
 }
