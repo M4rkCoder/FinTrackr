@@ -19,6 +19,8 @@ export default function AccountSetting() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(account?.name || "");
+  const [userIsEditing, setUserIsEditing] = useState(false);
+  const [userName, setUserName] = useState(user?.user_metadata.name || "");
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -42,7 +44,7 @@ export default function AccountSetting() {
             가계부 이름
           </Label>
           {isEditing ? (
-            <div className="flex items-center space-x-2 mt-1 w-1/3">
+            <div className="flex items-center space-x-2 mt-1 w-1/3 py-2">
               <Input
                 id="accountName"
                 value={name}
@@ -54,8 +56,8 @@ export default function AccountSetting() {
               </Button>
             </div>
           ) : (
-            <div className="flex items-center space-x-4 mt-1 mr-3 w-1/3 px-3 py-1">
-              <span className="text-lg font-medium w-full trncate">
+            <div className="flex items-center space-x-4 mt-1 w-1/3 px-1.5 py-2.5">
+              <span className="text-lg font-medium w-full truncate">
                 {account?.name}
               </span>
               <Button variant="outline" size="sm" onClick={handleEditClick}>
@@ -64,6 +66,36 @@ export default function AccountSetting() {
             </div>
           )}
         </div>
+
+        <Label htmlFor="userName" className="text-lg font-bold">
+          사용자 이름
+        </Label>
+        {userIsEditing ? (
+          <div className="flex items-center space-x-2 mt-1 w-1/3 py-2">
+            <Input
+              id="userName"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              className="!text-lg font-medium w-full"
+            />
+            <Button size="sm" onClick={() => setUserIsEditing(false)}>
+              저장
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-4 mt-1 w-1/3 px-1.5 py-2.5">
+            <span className="text-lg font-medium w-full truncate">
+              {userName}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setUserIsEditing(true)}
+            >
+              수정
+            </Button>
+          </div>
+        )}
 
         <div>
           <Label className="text-lg font-bold mt-5">가계부 멤버</Label>

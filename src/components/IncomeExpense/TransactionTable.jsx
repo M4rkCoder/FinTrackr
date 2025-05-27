@@ -17,13 +17,12 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "../ui/badge";
-import { Trash2, Pencil, SmilePlus } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import clsx from "clsx";
-import { DataTableFacetedFilter } from "./TableFilter";
+import TablePagination from "./TablePagination";
+import { getTransactionColumns } from "./TableColumns";
 
 export default function TransactionTable({
   data,
@@ -103,147 +102,15 @@ export default function TransactionTable({
     }
   };
 
-  const renderedCategoryFilter = ({ column }) => (
-    <DataTableFacetedFilter
-      column={column}
-      title="카테고리"
-      options={categoryOptions}
-    />
-  );
-
-  const renderedTypeFilter = ({ column }) => (
-    <DataTableFacetedFilter
-      column={column}
-      title="분류"
-      options={[
-        {
-          value: "수입",
-          label: <Badge variant="income">수입</Badge>,
-        },
-        {
-          value: "지출",
-          label: <Badge variant="expense">지출</Badge>,
-        },
-      ]}
-    />
-  );
-  const columns = useMemo(
-    () => [
-      {
-        id: "select",
-        header: () => (
-          <div className="flex justify-center">
-            <Checkbox
-              checked={isAllSelected}
-              ref={headerCheckboxRef}
-              onClick={(e) => e.stopPropagation()}
-              onCheckedChange={toggleSelectAll}
-              aria-label="전체 선택"
-            />
-          </div>
-        ),
-        cell: ({ row }) => (
-          <div className="flex justify-center">
-            <Checkbox
-              checked={selectedRowIds.has(row.original.id)}
-              onClick={(e) => e.stopPropagation()}
-              onCheckedChange={() => toggleSelectRow(row.original.id)}
-              aria-label="행 선택"
-            />
-          </div>
-        ),
-        size: 10,
-      },
-      {
-        accessorKey: "date",
-        header: "날짜",
-        cell: (info) => {
-          const date = new Date(info.getValue());
-          return (
-            <span className="text-sm">
-              {date.toLocaleDateString("ko-KR")}
-              {/* {date.getMonth() + 1}. {date.getDate()}. */}
-            </span>
-          );
-        },
-        size: 80,
-      },
-      {
-        accessorKey: "type",
-        header: "분류",
-        filterFn: "arrIncludes",
-        meta: {
-          filterComponent: renderedTypeFilter,
-        },
-        cell: (info) => {
-          const type = info.getValue();
-          const isIncome = type === "수입";
-          return (
-            <Badge variant={isIncome ? "income" : "expense"}>{type}</Badge>
-          );
-        },
-        size: 80,
-      },
-      {
-        id: "category",
-        accessorFn: (row) => row.sub_category,
-        header: "카테고리",
-        enableColumnFilter: true,
-        filterFn: "arrIncludes",
-        meta: {
-          filterComponent: renderedCategoryFilter,
-        },
-        cell: ({ row }) => {
-          const emoji = row.original.emoji || (
-            <SmilePlus size={18} color="gray" />
-          );
-          const category = row.original.sub_category || "없음";
-          return (
-            <span className="flex items-center gap-1">
-              <span>{emoji}</span>
-              <span>{category}</span>
-            </span>
-          );
-        },
-        size: 120,
-      },
-      {
-        accessorKey: "amount",
-        header: "금액",
-        cell: (info) => (
-          <span className="font-semibold text-sm">
-            {info.getValue().toLocaleString()}
-          </span>
-        ),
-        size: 120,
-      },
-      {
-        accessorKey: "description",
-        header: "내역",
-        size: 150,
-        cell: (info) => (
-          <span className="block truncate max-w-[150px]">
-            {info.getValue()}
-          </span>
-        ),
-      },
-      {
-        accessorKey: "remarks",
-        header: "메모",
-        cell: (info) => {
-          const value = info.getValue();
-          const isRealValue = value && value.trim() !== "";
-          return isRealValue ? (
-            <span className="text-gray-400 inline-block px-2" title={value}>
-              ...
-            </span>
-          ) : null;
-        },
-        size: 50,
-      },
-    ],
-    [selectedRowIds]
-  );
+  const columns = useMemo(() => {
+    return getTransactionColumns({
+      selectedRowIds,
+      isAllSelected,
+      toggleSelectAll,
+      toggleSelectRow,
+      headerCheckboxRef,
+    });
+  }, [selectedRowIds]);
 
   const table = useReactTable({
     data: filteredData,
@@ -280,7 +147,13 @@ export default function TransactionTable({
           )
           .map((col) => {
             const FilterComponent = col.columnDef.meta?.filterComponent;
-            return <FilterComponent key={col.id} column={col} />;
+            return (
+              <FilterComponent
+                key={col.id}
+                column={col}
+                categoryOptions={categoryOptions}
+              />
+            );
           })}
         <Input
           placeholder="내역, 카테고리 검색..."
@@ -321,7 +194,7 @@ export default function TransactionTable({
                       header.column.id === "select" && "w-[40px]",
                       header.column.id === "date" && "w-[100px]",
                       header.column.id === "type" && "w-[80px]",
-                      header.column.id === "category" && "w-[120px]",
+                      header.column.id === "sub_category" && "w-[120px]",
                       header.column.id === "amount" && "w-[100px]",
                       header.column.id === "description" && "w-[200px]",
                       header.column.id === "remarks" && "w-[60px]"
@@ -352,7 +225,7 @@ export default function TransactionTable({
                       cell.column.id === "select" && "w-[40px]",
                       cell.column.id === "date" && "w-[100px]",
                       cell.column.id === "type" && "w-[80px]",
-                      cell.column.id === "category" && "w-[120px]",
+                      cell.column.id === "sub_category" && "w-[120px]",
                       cell.column.id === "amount" && "w-[100px]",
                       cell.column.id === "description" && "w-[200px]",
                       cell.column.id === "remarks" && "w-[60px]"
@@ -367,28 +240,7 @@ export default function TransactionTable({
         </Table>
       </div>
 
-      {/* 📄 페이지네이션 */}
-      <div className="w-[80%] flex items-center justify-between px-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          이전
-        </Button>
-        <span className="text-sm text-muted-foreground">
-          {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
-        </span>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          다음
-        </Button>
-      </div>
+      <TablePagination table={table} />
     </div>
   );
 }

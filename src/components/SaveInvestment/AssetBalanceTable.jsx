@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -11,6 +11,15 @@ import {
   endOfMonth,
   parseISO,
 } from "date-fns";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from "@/components/ui/table";
+import { Button } from "../ui/button";
 import { useSupabaseQuery } from "@/utils/useSupabaseQuery";
 
 // 최근 월 목록 구하기 함수 (예: ["2024-12", ..., "2025-05"])
@@ -41,7 +50,7 @@ export default function AssetBalanceTable() {
 
   // 📡 Supabase 훅
   const { data: rawData = [], isLoading } = useSupabaseQuery({
-    table: "asset_balances",
+    table: "asset_view",
     filters: {
       dateRange, // from, to가 포함된 구조여야 훅에서 처리 가능
     },
@@ -56,7 +65,12 @@ export default function AssetBalanceTable() {
       const month = format(parseISO(row.date), "yyyy-MM");
 
       if (!grouped[assetId]) {
-        grouped[assetId] = { asset_id: assetId };
+        grouped[assetId] = {
+          asset_id: assetId,
+          name: row.name,
+          type: row.type,
+          institution: row.institution,
+        };
       }
 
       grouped[assetId][month] = row.balance;
@@ -64,13 +78,21 @@ export default function AssetBalanceTable() {
 
     return Object.values(grouped);
   }, [rawData]);
-
+  console.log(groupedData);
   // 📋 컬럼 정의
   const columns = useMemo(
     () => [
       {
-        accessorKey: "asset_id",
-        header: "계좌 ID",
+        accessorKey: "type",
+        header: "분류",
+      },
+      {
+        accessorKey: "name",
+        header: "자산명",
+      },
+      {
+        accessorKey: "institution",
+        header: "투자처",
       },
       ...months.map((month) => ({
         accessorKey: month,
@@ -92,65 +114,57 @@ export default function AssetBalanceTable() {
   });
 
   return (
-    <div style={{ padding: "1rem" }}>
-      <h2
-        style={{ fontSize: "1.2rem", fontWeight: "bold", marginBottom: "1rem" }}
-      >
-        📊 최근 계좌 잔액
-      </h2>
-
+    <div className="mt-4">
       {/* 뷰 변경 버튼 */}
-      <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
-        <button onClick={() => setMonths(getRecentMonths(6))}>
+      <div className="flex flex-row gap-2">
+        <Button onClick={() => setMonths(getRecentMonths(6))}>
           최근 6개월
-        </button>
-        <button onClick={() => setMonths(getRecentMonths(12))}>최근 1년</button>
+        </Button>
+        <Button onClick={() => setMonths(getRecentMonths(12))}>최근 1년</Button>
       </div>
 
       {isLoading ? (
         <p>불러오는 중...</p>
       ) : (
-        <table style={{ borderCollapse: "collapse", width: "100%" }}>
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    style={{
-                      border: "1px solid #ccc",
-                      padding: "0.5rem",
-                      backgroundColor: "#f0f0f0",
-                    }}
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td
-                    key={cell.id}
-                    style={{
-                      border: "1px solid #ccc",
-                      padding: "0.5rem",
-                      textAlign: "right",
-                    }}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="w-full rounded-md border mt-4">
+          <Table className="table-fixed w-full">
+            <TableHeader className="bg-gray-100">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} className="font-bold">
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      // style={{
+                      //   border: "1px solid #ccc",
+                      //   padding: "0.5rem",
+                      //   textAlign: "right",
+                      // }}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       )}
     </div>
   );
