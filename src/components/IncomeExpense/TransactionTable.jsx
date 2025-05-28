@@ -66,7 +66,6 @@ export default function TransactionTable({
 
     return Array.from(map.values());
   }, [data]);
-  // console.log("카테고리옵션:", categoryOptions);
 
   const toggleSelectRow = (id) => {
     setSelectedRowIds((prev) => {

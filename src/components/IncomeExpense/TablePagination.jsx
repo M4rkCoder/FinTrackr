@@ -1,27 +1,46 @@
-import { Button } from "../ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationLink,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
 
 export default function TablePagination({ table }) {
+  const pageIndex = table.getState().pagination.pageIndex;
+  const pageCount = table.getPageCount();
+
   return (
-    <div className="w-[80%] flex items-center justify-between px-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => table.previousPage()}
-        disabled={!table.getCanPreviousPage()}
-      >
-        이전
-      </Button>
-      <span className="text-sm text-muted-foreground">
-        {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
-      </span>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => table.nextPage()}
-        disabled={!table.getCanNextPage()}
-      >
-        다음
-      </Button>
-    </div>
+    <Pagination>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          />
+        </PaginationItem>
+
+        {/* 페이지 번호 버튼들 */}
+        {Array.from({ length: pageCount }, (_, i) => (
+          <PaginationItem key={i}>
+            <PaginationLink
+              isActive={i === pageIndex}
+              onClick={() => table.setPageIndex(i)}
+            >
+              {i + 1}
+            </PaginationLink>
+          </PaginationItem>
+        ))}
+
+        <PaginationItem>
+          <PaginationNext
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
   );
 }
