@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { SmilePlus, ArrowDownCircle, ArrowUpCircle } from "lucide-react";
+import { useAccountStore } from "@/stores/useAccountStore";
 
 export default function CategorySheet({
   open,
@@ -29,6 +30,7 @@ export default function CategorySheet({
   const [subCategory, setSubCategory] = useState(category?.sub_category || "");
   const [emoji, setEmoji] = useState(category?.emoji || "");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const account = useAccountStore((state) => state.account);
 
   useEffect(() => {
     if (category) {
@@ -122,6 +124,7 @@ export default function CategorySheet({
             <Button
               onClick={() =>
                 onSave({
+                  account_id: account?.id,
                   id: category ? category.id : undefined,
                   type_id: parseInt(selectedTypeId, 10),
                   emoji,

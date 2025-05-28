@@ -1,6 +1,6 @@
 import AccountSetting from "@/components/Settings/AccountSetting";
 import CategorySetting from "@/components/Settings/CategorySetting";
-import PageWrapper from "@/components/PageTitle";
+import PageWrapper from "@/components/PageWrapper";
 
 export default function Settings() {
   return (

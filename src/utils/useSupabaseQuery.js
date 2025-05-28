@@ -1,18 +1,29 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "./supabase";
+import { useAccountStore } from "../stores/useAccountStore";
 
 export function useSupabaseQuery({
   table,
   filters = {},
   select = "*",
   orderBy,
+  requireAccountId = true, // 기본값: account_id 필터링 활성화
 }) {
-  const queryKey = ["supabase", table, filters, orderBy];
+  const account = useAccountStore((state) => state.account);
+  const accountId = account?.id;
+
+  const queryKey = ["supabase", table, filters, orderBy, accountId];
 
   return useQuery({
     queryKey,
+    enabled: !requireAccountId || !!accountId, // accountId 준비되었을 때만 실행
     queryFn: async () => {
       let query = supabase.from(table).select(select);
+
+      // ✅ account_id 필터링 조건 추가
+      if (requireAccountId && accountId) {
+        query = query.eq("account_id", accountId);
+      }
 
       const { dateRange, ...rest } = filters;
 
@@ -32,7 +43,6 @@ export function useSupabaseQuery({
       }
 
       const { data, error } = await query;
-
       if (error) throw new Error(error.message);
       return data || [];
     },

@@ -1,6 +1,6 @@
 import AssetBalanceTable from "@/components/SaveInvestment/AssetBalanceTable";
 import { Separator } from "@/components/ui/separator";
-import PageWrapper from "@/components/PageTitle";
+import PageWrapper from "@/components/PageWrapper";
 
 export default function SaveInvestment() {
   return (

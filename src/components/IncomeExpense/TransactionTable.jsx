@@ -25,7 +25,7 @@ import TablePagination from "./TablePagination";
 import { getTransactionColumns } from "./TableColumns";
 
 export default function TransactionTable({
-  data,
+  data = [],
   onRemove,
   onEdit,
   onOpenChange,
@@ -35,7 +35,10 @@ export default function TransactionTable({
   const headerCheckboxRef = useRef(null);
 
   const filteredData = useMemo(() => {
+    if (!Array.isArray(data)) return [];
+
     if (!filter.trim()) return data;
+
     const lowerFilter = filter.toLowerCase();
     return data.filter((row) => {
       return (
@@ -47,16 +50,20 @@ export default function TransactionTable({
 
   const categoryOptions = useMemo(() => {
     const map = new Map();
-    data.forEach((item) => {
-      if (item.sub_category) {
-        if (!map.has(item.sub_category)) {
-          map.set(item.sub_category, {
-            label: `${item.emoji} ${item.sub_category}`,
-            value: item.sub_category,
-          });
+
+    if (Array.isArray(data)) {
+      data.forEach((item) => {
+        if (item.sub_category) {
+          if (!map.has(item.sub_category)) {
+            map.set(item.sub_category, {
+              label: `${item.emoji} ${item.sub_category}`,
+              value: item.sub_category,
+            });
+          }
         }
-      }
-    });
+      });
+    }
+
     return Array.from(map.values());
   }, [data]);
   // console.log("카테고리옵션:", categoryOptions);
