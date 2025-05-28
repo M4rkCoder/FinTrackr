@@ -1,6 +1,7 @@
 import {
   renderedCategoryFilter,
   renderedTypeFilter,
+  renderedFixedFilter,
 } from "./TableFilterComponents";
 import { SmilePlus } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
@@ -100,9 +101,37 @@ export const getTransactionColumns = ({
     accessorKey: "description",
     header: "내역",
     size: 150,
-    cell: (info) => (
-      <span className="block truncate max-w-[150px]">{info.getValue()}</span>
-    ),
+    cell: ({ row }) => {
+      const description = row.original.description;
+      const isFixed = row.original.is_fixed;
+      return (
+        <div className="flex flex-row items-center mx-auto">
+          {isFixed && (
+            <Badge
+              variant="secondary"
+              className="mr-2 text-[8px] font-light bg-brand"
+            >
+              고정비
+            </Badge>
+          )}
+          <span className="block truncate max-w-[150px]">{description}</span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "is_fixed",
+    header: () => null, // 헤더 숨기기
+    cell: () => null, // 셀 숨기기
+    filterFn: (row, columnId, filterValue) => {
+      const rowValue = row.getValue(columnId); // true 또는 false
+      const filterBool = filterValue === "true"; // 문자열 → boolean 변환
+      return rowValue === filterBool;
+    },
+    meta: {
+      filterComponent: renderedFixedFilter,
+    },
+    size: 0,
   },
   {
     accessorKey: "remarks",

@@ -67,6 +67,25 @@ export default function TransactionTable({
     return Array.from(map.values());
   }, [data]);
 
+  const fixedOptions = useMemo(() => {
+    const map = new Map();
+
+    if (Array.isArray(data)) {
+      data.forEach((item) => {
+        if (item.is_fixed) {
+          if (!map.has(item.is_fixed)) {
+            map.set(item.is_fixed, {
+              label: "고정비",
+              value: item.is_fixed,
+            });
+          }
+        }
+      });
+    }
+
+    return Array.from(map.values());
+  }, [data]);
+
   const toggleSelectRow = (id) => {
     setSelectedRowIds((prev) => {
       const newSet = new Set(prev);
@@ -158,6 +177,7 @@ export default function TransactionTable({
                 key={col.id}
                 column={col}
                 categoryOptions={categoryOptions}
+                fixedOptions={fixedOptions}
               />
             );
           })}
@@ -203,6 +223,7 @@ export default function TransactionTable({
                       header.column.id === "sub_category" && "w-[120px]",
                       header.column.id === "amount" && "w-[100px]",
                       header.column.id === "description" && "w-[200px]",
+                      header.column.id === "is_fixed" && "w-[0px]",
                       header.column.id === "remarks" && "w-[60px]"
                     )}
                   >
@@ -234,6 +255,7 @@ export default function TransactionTable({
                       cell.column.id === "sub_category" && "w-[120px]",
                       cell.column.id === "amount" && "w-[100px]",
                       cell.column.id === "description" && "w-[200px]",
+                      cell.column.id === "is_fixed" && "w-[0px]",
                       cell.column.id === "remarks" && "w-[60px]"
                     )}
                   >

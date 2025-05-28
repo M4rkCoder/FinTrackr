@@ -1,5 +1,6 @@
 import { Badge } from "../ui/badge";
 import { DataTableFacetedFilter } from "./DataTableFacetedFilter";
+import { BinaryFacetedFilter } from "./BinaryFacetedFilter";
 
 export const renderedCategoryFilter = ({ column, categoryOptions }) => (
   <DataTableFacetedFilter
@@ -23,5 +24,14 @@ export const renderedTypeFilter = ({ column }) => (
         label: <Badge variant="expense">지출</Badge>,
       },
     ]}
+  />
+);
+
+export const renderedFixedFilter = ({ column }) => (
+  <BinaryFacetedFilter
+    column={column}
+    title="고정비"
+    trueLabel="고정비"
+    falseLabel="고정비 제외"
   />
 );
