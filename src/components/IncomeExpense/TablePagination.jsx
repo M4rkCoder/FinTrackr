@@ -19,6 +19,7 @@ export default function TablePagination({ table }) {
           <PaginationPrevious
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
+            className="cursor-pointer"
           />
         </PaginationItem>
 
@@ -28,6 +29,7 @@ export default function TablePagination({ table }) {
             <PaginationLink
               isActive={i === pageIndex}
               onClick={() => table.setPageIndex(i)}
+              className="cursor-pointer"
             >
               {i + 1}
             </PaginationLink>
@@ -38,6 +40,7 @@ export default function TablePagination({ table }) {
           <PaginationNext
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
+            className="cursor-pointer"
           />
         </PaginationItem>
       </PaginationContent>
