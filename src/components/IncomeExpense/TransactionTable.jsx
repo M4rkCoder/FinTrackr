@@ -31,6 +31,7 @@ export default function TransactionTable({
   onOpenChange,
 }) {
   const [filter, setFilter] = useState("");
+  const [inputValue, setInputValue] = useState("");
   const [selectedRowIds, setSelectedRowIds] = useState(new Set());
   const headerCheckboxRef = useRef(null);
 
@@ -142,6 +143,22 @@ export default function TransactionTable({
     },
   });
 
+  function debouce(func, delay) {
+    let timer;
+    return function (...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
+  }
+
+  const debouncedSetFilter = useRef(
+    debouce((value) => {
+      setFilter(value);
+    }, 500)
+  ).current;
+
   return (
     <div className="flex flex-col items-center mt-6 space-y-4 w-full">
       {/* 🔍 필터 인풋 */}
@@ -163,8 +180,12 @@ export default function TransactionTable({
           })}
         <Input
           placeholder="내역, 카테고리 검색..."
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
+          value={inputValue}
+          onChange={(e) => {
+            const value = e.target.value;
+            setInputValue(value);
+            debouncedSetFilter(value);
+          }}
           className="w-[60%]"
         />
         <div className="flex flex-row gap-2">
